@@ -46,10 +46,7 @@ const atString = [a, t].join('+');
 // "function at() { [native code] }"
 const atFunctionString = `([][${atString}]+[])`
 const c = `${atFunctionString}[${val(3)}]`;
-const o = `${atFunctionString}[${val(6)}]`;
 const v = `${atFunctionString}[${val(21)}]`;
-
-const _space = `${atFunctionString}[${val(8)}]`;
 const _openParen = `${atFunctionString}[${val(11)}]`;
 const _closeParen = `${atFunctionString}[${val(12)}]`;
 const _openCurly = `${atFunctionString}[${val(14)}]`;
@@ -58,9 +55,10 @@ const _closeCurly = `${atFunctionString}[${val(30)}]`;
 // by adding true to the start, we can make a net gain by reducing the cost of the index
 // "truefunction at() { [native code] }"
 const trueAtFunctionString = [trueString, atFunctionString].join('+')
-const _openSquare = `(${trueAtFunctionString})[${val(20)}]`; // saves 10 characters over index=16
-const _closeSquare = `(${trueAtFunctionString})[${val(32)}]`; // saves 13 characters over index=28
-
+const o = `(${trueAtFunctionString})[${val(10)}]`; 
+const _space = `(${trueAtFunctionString})[${val(12)}]`; 
+const _openSquare = `(${trueAtFunctionString})[${val(20)}]`;
+const _closeSquare = `(${trueAtFunctionString})[${val(32)}]`;
 
 // "italics"
 const italicsString = [i, t, a, l, i, c, s].join('+');
@@ -83,34 +81,47 @@ const constructorString = [c, o, n, s, t, r, u, c, t, o, r].join('+');
 // "function String() { [native code] }"
 const stringConstructorString = `(${emptyString}[${constructorString}]+[])`;
 const g = `${stringConstructorString}[${val(14)}]`;
-const S = `${stringConstructorString}[${val(9)}]`;
+// "truefunction String() { [native code] }"
+const trueStringConstructorString = [trueString, stringConstructorString].join('+');
+const S = `(${trueStringConstructorString})[${val(13)}]`; 
 
 // "function Array() { [native code] }"
 const arrayConstructorString = `([][${constructorString}]+[])`;
 const y = `${arrayConstructorString}[${val(13)}]`;
-const A = `${arrayConstructorString}[${val(9)}]`;
+// "truefunction Array() { [native code] }"
+const trueArrayConstructorString = [trueString, arrayConstructorString].join('+');
+const A = `(${trueArrayConstructorString})[${val(13)}]`; 
 
 // "function Number() { [native code] }"
 const numberConstructorString = `((+[])[${constructorString}]+[])`;
 const b = `${numberConstructorString}[${val(12)}]`;
 const m = `${numberConstructorString}[${val(11)}]`;
-const N = `${numberConstructorString}[${val(9)}]`;
+// "truefunction Number() { [native code] }"
+const trueNumberConstructorString = [trueString, numberConstructorString].join('+');
+const N = `(${trueNumberConstructorString})[${val(13)}]`;
+
 
 // "function Boolean() { [native code] }"
 const booleanConstructorString = `((![])[${constructorString}]+[])`;
-const B = `${booleanConstructorString}[${val(9)}]`;
+// "truefunction Boolean() { [native code] }"
+const trueBooleanConstructorString = [trueString, booleanConstructorString].join('+');
+const B = `(${trueBooleanConstructorString})[${val(13)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructorString = `([][${atString}][${constructorString}]+[])`;
-const F = `${functionConstructorString}[${val(9)}]`;
+// "truefunction Function() { [native code] }"
+const trueFunctionConstructorString = [trueString, functionConstructorString].join('+');
+const F = `(${trueFunctionConstructorString})[${val(13)}]`;
+
 
 // `function anonymous(
 //     ) {
 //
 //     }`
-const anonymousFunctionString
-    = `(([])[${atString}][${constructorString}]()+[])`;
-const _newLine = `${anonymousFunctionString}[${val(23)}]`; //saves 25 char to take newline at 23 instead of 19 due to cheaper index
+const anonymousFunctionString = `(([])[${atString}][${constructorString}]()+[])`;
+// There are multiple instances of the newline character in that string.
+// It saves several characters to take newline at 23 instead of 19 due to cheaper index
+const _newLine = `${anonymousFunctionString}[${val(23)}]`;
 
 
 const entriesString = [e, n, t, r, i, e, s].join('+');
@@ -128,9 +139,9 @@ const O = `${objectObjectString}[${val(8)}]`;
 
 // "concat"
 const concatString = [c, o, n, c, a, t].join('+');
-// "0,0"
-const zeroCommaZeroString = `([+[]][${concatString}](+[])+[])`
-const _comma = `${zeroCommaZeroString}[${val(1)}]`;
+// ",0"
+const zeroCommaZeroString = `([[]][${concatString}](+[])+[])`
+const _comma = `${zeroCommaZeroString}[${val(0)}]`;
 
 
 // "return"
@@ -170,7 +181,7 @@ const k = `${dW5kZWZpbmVkString}[${val(3)}]`;
 const V = `${dW5kZWZpbmVkString}[${val(10)}]`;
 
 // "truedW5kZWZpbmVk"
-const truedW5kZWZpbmVkString = [trueString, dW5kZWZpbmVkString].join('+'); // add true to reduce cost of index, saves 2 characters
+const truedW5kZWZpbmVkString = [trueString, dW5kZWZpbmVkString].join('+'); // add true to reduce cost of index
 const p = `(${truedW5kZWZpbmVkString})[${val(11)}]`;
 
 // "trueFalse"
@@ -178,7 +189,7 @@ const trueFalseString = [trueString, falseString].join('+');
 // "dHJ1ZWZhbHNl"
 const dHJ1ZWZhbHNlString = `${btoaFunction}(${trueFalseString})`;
 // "truedHJ1ZWZhbHNl"
-const truedHJ1ZWZhbHNlString = [trueString, dHJ1ZWZhbHNlString].join('+'); // add true to reduce cost of index, saves 2 characters
+const truedHJ1ZWZhbHNlString = [trueString, dHJ1ZWZhbHNlString].join('+'); // add true to reduce cost of index
 const h = `(${truedHJ1ZWZhbHNlString})[${val(11)}]`;
 
 // "truetrue"
@@ -201,9 +212,9 @@ const X = `${MXQequalString}[${val(1)}]`;
 const caString = [c, a].join('+');
 const q = `${atobFunction}(${caString})`;
 
-// "cw=="
-const cwequalsString = `${btoaFunction}(${s})`;
-const w = `${cwequalsString}[${val(1)}]`;
+// "Mw=="
+const MwequalsString = `${btoaFunction}(${val(3)})`;
+const w = `${MwequalsString}[${val(1)}]`;
 
 // "f31"
 const f31String = [f, val(3), val(1)].join('+');
@@ -240,10 +251,10 @@ const K = `${KQequalsString}[${val(0)}]`;
 const PAqualsString = `${btoaFunction}(${_lessthan})`;
 const P = `${PAqualsString}[${val(0)}]`;
 
+
 // "MTA="
 const MTAequalsString = `${btoaFunction}(${val(10)})`;
 const T = `${MTAequalsString}[${val(1)}]`;
-
 
 
 // "YQ=="
@@ -251,7 +262,7 @@ const YQequalsString = `${btoaFunction}(${a})`;
 const Y = `${YQequalsString}[${val(0)}]`;
 const Q = `${YQequalsString}[${val(1)}]`;
 
-
+// 
 const documentString = [d, o, c, u, m, e, n, t].join('+');
 // "return document"
 const returnDocumentString = `(${returnString}+${_space}+${documentString})`;
@@ -259,7 +270,12 @@ const documentObject = `(${functionMaker(returnDocumentString)})`;
 // "function HTMLDocument() { [native code] }"
 const documentObjectString = `(${documentObject}+[])`;
 const L = `${documentObjectString}[${val(11)}]`;
-const D = `${documentObjectString}[${val(12)}]`;
+
+// "t0"
+const t0String = [t, val(0)].join('+');
+// "dDA="
+const dDAequalsString = `${btoaFunction}(${t0String})`;
+const D = `${dDAequalsString}[${val(1)}]`;
 
 // "fiN"
 const fiNString = [f, i, N].join('+');
@@ -415,9 +431,14 @@ garboMap.set(`
 
 //=================================
 
+// "name"
+const nameString = [n,a,m,e].join('+');
+// "String"
+const StringString = `${emptyString}[${constructorString}][${nameString}]`;
+// String["fromCodePoint"]
 const fromCodePointFunction =
     [
-        S, t, r, i, n, g,
+        StringString,
         _openSquare, _doubleQuote,
         f, r, o, m, C, o, d, e, P, o, i, n, t,
         _doubleQuote, _closeSquare
@@ -427,12 +448,12 @@ const returnFromCodePointFunction = `(${returnString}+${_space}+${fromCodePointF
 
 function convertText(val) {
     return [...val]
-        .map(x => garboMap.get(x) || codePoint(x))
+        .map(x => garboMap.get(x) || getCodePoint(x))
         .join`+`;
 }
 
 
-function codePoint(x) {
+function getCodePoint(x) {
     const codepointString = x.codePointAt(0) + [];
     const convertedPointString = convertText(codepointString);
     return `(${functionMaker(returnFromCodePointFunction)})(${convertedPointString})`;
@@ -442,6 +463,7 @@ function convertCode(text) {
     return functionMaker(convertText(`${text}`))
 }
 
+// TODO: make simpler?
 function convertFile(dataUrl) {
     const fileFunction = `
     const f = window.open();
@@ -454,8 +476,7 @@ function convertFile(dataUrl) {
 // diagonstics ======================================================================================
 const sizeMap = [];
 garboMap.forEach((v, k) => sizeMap.push([k, v.length]));
-sizeMap.push(['@', codePoint('@').length]);
-
+sizeMap.push(['@', convertText('@').length]);
 
 const testString1 = 'abcdefghijklmnopqrstuvwxyz';
 const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -466,7 +487,8 @@ const test1 = eval(convertText(testString1)) === testString1;
 const test2 = eval(convertText(testString2)) === testString2;
 const test3 = eval(convertText(testString3)) === testString3;
 const test4 = eval(convertText(testString4)) === testString4;
-const testAll = test1 && test2 && test3 && test4;
+const test5 = eval(convertText('@')) === '@';
+const testAll = test1 && test2 && test3 && test4 && test5;
 
 console.log(sizeMap);
 // console.log(sizeMap.sort((a,b)=>(b[1]-a[1])));
