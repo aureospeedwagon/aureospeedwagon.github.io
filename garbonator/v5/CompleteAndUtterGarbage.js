@@ -6,7 +6,9 @@ function val(n) {
         return '(' + '+!+[]'.repeat(n) + ')';
     }
 
-    return '(' + [...n.toString()].map(x => `${val(x)}+[]`).join('+') + ')';
+    return '(' + [...n.toString()].map((x, i) => {
+        return i ? `${val(x)}` : `${val(x)}+[]`;
+    }).join('+') + ')';
 
 }
 
@@ -27,71 +29,80 @@ const falseString = '(![]+[])';
 const undefinedString = '([][[]]+[])';
 const emptyString = '([]+[])'
 
-const a = `(${falseString}[${val(1)}])`;
-const d = `(${undefinedString}[${val(2)}])`;
-const e = `(${trueString}[${val(3)}])`;
-const f = `(${falseString}[${val(0)}])`;
-const i = `(${undefinedString}[${val(5)}])`;
-const l = `(${falseString}[${val(2)}])`;
-const n = `(${undefinedString}[${val(1)}])`;
-const r = `(${trueString}[${val(1)}])`;
-const s = `(${falseString}[${val(3)}])`;
-const t = `(${trueString}[${val(0)}])`;
-const u = `(${undefinedString}[${val(0)}])`;
+const a = `${falseString}[${val(1)}]`;
+const d = `${undefinedString}[${val(2)}]`;
+const e = `${trueString}[${val(3)}]`;
+const f = `${falseString}[${val(0)}]`;
+const i = `${undefinedString}[${val(5)}]`;
+const l = `${falseString}[${val(2)}]`;
+const n = `${undefinedString}[${val(1)}]`;
+const r = `${trueString}[${val(1)}]`;
+const s = `${falseString}[${val(3)}]`;
+const t = `${trueString}[${val(0)}]`;
+const u = `${undefinedString}[${val(0)}]`;
 
 const atString = [a, t].join('+');
 
-// "function flat() { [native code] }"
+// "function at() { [native code] }"
 const atFunctionString = `([][${atString}]+[])`
-const c = `(${atFunctionString}[${val(3)}])`;
-const o = `(${atFunctionString}[${val(6)}])`;
-const v = `(${atFunctionString}[${val(21)}])`;
+const c = `${atFunctionString}[${val(3)}]`;
+const o = `${atFunctionString}[${val(6)}]`;
+const v = `${atFunctionString}[${val(21)}]`;
 
-const _space = `(${atFunctionString}[${val(8)}])`;
-const _openParen = `(${atFunctionString}[${val(11)}])`;
-const _closeParen = `(${atFunctionString}[${val(12)}])`;
-const _openCurly = `(${atFunctionString}[${val(14)}])`;
-const _closeCurly = `(${atFunctionString}[${val(30)}])`;
-const _openSquare = `(${atFunctionString}[${val(16)}])`;
-const _closeSquare = `(${atFunctionString}[${val(28)}])`;
+const _space = `${atFunctionString}[${val(8)}]`;
+const _openParen = `${atFunctionString}[${val(11)}]`;
+const _closeParen = `${atFunctionString}[${val(12)}]`;
+const _openCurly = `${atFunctionString}[${val(14)}]`;
+const _closeCurly = `${atFunctionString}[${val(30)}]`;
 
+// by adding true to the start, we can make a net gain by reducing the cost of the index
+// "truefunction at() { [native code] }"
+const trueAtFunctionString = [trueString, atFunctionString].join('+')
+const _openSquare = `(${trueAtFunctionString})[${val(20)}]`; // saves 10 characters over index=16
+const _closeSquare = `(${trueAtFunctionString})[${val(32)}]`; // saves 13 characters over index=28
+
+
+// "italics"
+const italicsString = [i, t, a, l, i, c, s].join('+');
+// "<i></i>"
+const italicsStringString = `(${emptyString}[${italicsString}]())`;
+const _lessthan = `${italicsStringString}[${val(0)}]`;
+const _greaterthan = `${italicsStringString}[${val(2)}]`;
+const _forwardSlash = `${italicsStringString}[${val(4)}]`;
 
 // "fontcolor"
 const fontcolorString = [f, o, n, t, c, o, l, o, r].join('+');
 // "<font color="undefined"></font>"
 const fontcolorStringString = `(${emptyString}[${fontcolorString}]())`;
-const _doubleQuote = `(${fontcolorStringString}[${val(12)}])`;
-const _equals = `(${fontcolorStringString}[${val(11)}])`;
-const _lessthan = `(${fontcolorStringString}[${val(0)}])`;
-const _greaterthan = `(${fontcolorStringString}[${val(23)}])`;
-const _forwardSlash = `(${fontcolorStringString}[${val(25)}])`;
+const _doubleQuote = `${fontcolorStringString}[${val(12)}]`;
+const _equals = `${fontcolorStringString}[${val(11)}]`;
 
-
+// "constructor"
 const constructorString = [c, o, n, s, t, r, u, c, t, o, r].join('+');
 
 // "function String() { [native code] }"
 const stringConstructorString = `(${emptyString}[${constructorString}]+[])`;
-const g = `(${stringConstructorString}[${val(14)}])`;
-const S = `(${stringConstructorString}[${val(9)}])`;
+const g = `${stringConstructorString}[${val(14)}]`;
+const S = `${stringConstructorString}[${val(9)}]`;
 
 // "function Array() { [native code] }"
 const arrayConstructorString = `([][${constructorString}]+[])`;
-const y = `(${arrayConstructorString}[${val(13)}])`;
-const A = `(${arrayConstructorString}[${val(9)}])`;
+const y = `${arrayConstructorString}[${val(13)}]`;
+const A = `${arrayConstructorString}[${val(9)}]`;
 
 // "function Number() { [native code] }"
 const numberConstructorString = `((+[])[${constructorString}]+[])`;
-const b = `(${numberConstructorString}[${val(12)}])`;
-const m = `(${numberConstructorString}[${val(11)}])`;
-const N = `(${numberConstructorString}[${val(9)}])`;
+const b = `${numberConstructorString}[${val(12)}]`;
+const m = `${numberConstructorString}[${val(11)}]`;
+const N = `${numberConstructorString}[${val(9)}]`;
 
 // "function Boolean() { [native code] }"
 const booleanConstructorString = `((![])[${constructorString}]+[])`;
-const B = `(${booleanConstructorString}[${val(9)}])`;
+const B = `${booleanConstructorString}[${val(9)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructorString = `([][${atString}][${constructorString}]+[])`;
-const F = `(${functionConstructorString}[${val(9)}])`;
+const F = `${functionConstructorString}[${val(9)}]`;
 
 // `function anonymous(
 //     ) {
@@ -99,39 +110,42 @@ const F = `(${functionConstructorString}[${val(9)}])`;
 //     }`
 const anonymousFunctionString
     = `(([])[${atString}][${constructorString}]()+[])`;
-const _newLine = `(${anonymousFunctionString}[${val(19)}])`;
+const _newLine = `${anonymousFunctionString}[${val(23)}]`; //saves 25 char to take newline at 23 instead of 19 due to cheaper index
 
 
 const entriesString = [e, n, t, r, i, e, s].join('+');
 // "[object Array Iterator]"
 const objectArrayIteratorString = `([][${entriesString}]()+[])`;
-const j = `(${objectArrayIteratorString}[${val(3)}])`;
-const I = `(${objectArrayIteratorString}[${val(14)}])`;
+const j = `${objectArrayIteratorString}[${val(3)}]`;
+const I = `${objectArrayIteratorString}[${val(14)}]`;
 
 
 const object = `([][${entriesString}]()[${constructorString}]())`;
 
 // "[object Object]"
 const objectObjectString = `(${object}+[])`;
-const O = `(${objectObjectString}[${val(8)}])`;
+const O = `${objectObjectString}[${val(8)}]`;
 
 // "concat"
-const concatString = [c,o,n,c,a,t].join('+');
+const concatString = [c, o, n, c, a, t].join('+');
 // "0,0"
 const zeroCommaZeroString = `([+[]][${concatString}](+[])+[])`
-const _comma = `(${zeroCommaZeroString}[${val(1)}])`;
+const _comma = `${zeroCommaZeroString}[${val(1)}]`;
 
 
+// "return"
 const returnString = [r, e, t, u, r, n].join('+');
 
 const functionMaker = (func) =>
     `([])[${atString}][${constructorString}](${func})()`;
 
+// "atob"
 const atobString = [a, t, o, b].join('+');
 // "return atob"
 const returnAtobString = `(${returnString}+${_space}+${atobString})`;
 const atobFunction = `(${functionMaker(returnAtobString)})`;
 
+// "btoa"
 const btoaString = [b, t, o, a].join('+');
 // "return btoa"
 const returnBtoaString = `(${returnString}+${_space}+${btoaString})`;
@@ -141,42 +155,47 @@ const btoaFunction = `(${functionMaker(returnBtoaString)})`;
 
 // "dHJ1ZQ=="
 const dHJ1ZQequalString = `${btoaFunction}(${trueString})`;
-const H = `(${dHJ1ZQequalString}[${val(1)}])`;
-const J = `(${dHJ1ZQequalString}[${val(2)}])`;
+const H = `${dHJ1ZQequalString}[${val(1)}]`;
+const J = `${dHJ1ZQequalString}[${val(2)}]`;
 
 // "ZmFsc2U="
 const ZmFsc2UequalString = `${btoaFunction}(${falseString})`;
-const Z = `(${ZmFsc2UequalString}[${val(0)}])`;
-const U = `(${ZmFsc2UequalString}[${val(6)}])`
+const Z = `${ZmFsc2UequalString}[${val(0)}]`;
+const U = `${ZmFsc2UequalString}[${val(6)}]`;
 
 // "dW5kZWZpbmVk"
-const dW5kZWZpbmVkString =  `${btoaFunction}(${undefinedString})`
-const W = `(${dW5kZWZpbmVkString}[${val(1)}])`
-const k = `(${dW5kZWZpbmVkString}[${val(3)}])`;
-const p = `(${dW5kZWZpbmVkString}[${val(7)}])`;
-const V = `(${dW5kZWZpbmVkString}[${val(10)}])`;
+const dW5kZWZpbmVkString = `${btoaFunction}(${undefinedString})`
+const W = `${dW5kZWZpbmVkString}[${val(1)}]`;
+const k = `${dW5kZWZpbmVkString}[${val(3)}]`;
+const V = `${dW5kZWZpbmVkString}[${val(10)}]`;
+
+// "truedW5kZWZpbmVk"
+const truedW5kZWZpbmVkString = [trueString, dW5kZWZpbmVkString].join('+'); // add true to reduce cost of index, saves 2 characters
+const p = `(${truedW5kZWZpbmVkString})[${val(11)}]`;
 
 // "trueFalse"
-const trueFalseString = [trueString,falseString].join('+');
+const trueFalseString = [trueString, falseString].join('+');
 // "dHJ1ZWZhbHNl"
 const dHJ1ZWZhbHNlString = `${btoaFunction}(${trueFalseString})`;
-const h = `(${dHJ1ZWZhbHNlString}[${val(7)}])`;
+// "truedHJ1ZWZhbHNl"
+const truedHJ1ZWZhbHNlString = [trueString, dHJ1ZWZhbHNlString].join('+'); // add true to reduce cost of index, saves 2 characters
+const h = `(${truedHJ1ZWZhbHNlString})[${val(11)}]`;
 
 // "truetrue"
 const trueTrueString = [trueString, trueString].join('+');
 // "dHJ1ZXRydWU="
 const dHJ1ZXRydWUequalString = `${btoaFunction}(${trueTrueString})`;
-const R = `(${dHJ1ZXRydWUequalString}[${val(6)}])`;
+const R = `${dHJ1ZXRydWUequalString}[${val(6)}]`;
 
 // "MQ=="
 const MQequalsString = `${btoaFunction}(${val(1)})`;
-const M = `(${MQequalsString}[${val(0)}])`;
+const M = `${MQequalsString}[${val(0)}]`;
 
 // "1true"
 const oneTrueString = [val(1), trueString].join('+');
 // "MXQ="
 const MXQequalString = `${btoaFunction}(${oneTrueString})`;
-const X = `(${MXQequalString}[${val(1)}])`;
+const X = `${MXQequalString}[${val(1)}]`;
 
 // "ca"
 const caString = [c, a].join('+');
@@ -184,13 +203,13 @@ const q = `${atobFunction}(${caString})`;
 
 // "cw=="
 const cwequalsString = `${btoaFunction}(${s})`;
-const w = `(${cwequalsString}[${val(1)}])`;
+const w = `${cwequalsString}[${val(1)}]`;
 
 // "f31"
-const f31String = [f,val(3),val(1)].join('+');
+const f31String = [f, val(3), val(1)].join('+');
 // "ZjMx"
 const ZjMxString = `${btoaFunction}(${f31String})`;
-const x = `(${ZjMxString}[${val(3)}])`;
+const x = `${ZjMxString}[${val(3)}]`;
 
 // "en"
 const enString = [e, n].join('+');
@@ -200,37 +219,37 @@ const z = `${atobFunction}(${enString})`;
 const tOpenParenString = [t, _openParen].join('+');
 // "dCg="
 const dCgequalString = `${btoaFunction}(${tOpenParenString})`;
-const C = `(${dCgequalString}[${val(1)}])`;
+const C = `${dCgequalString}[${val(1)}]`;
 
 // "MTE="
 const MTEequalsString = `${btoaFunction}(${val(11)})`;
-const E = `(${MTEequalsString}[${val(2)}])`;
+const E = `${MTEequalsString}[${val(2)}]`;
 
 // "tf"
-const teString = [t, f].join('+');
+const tfString = [t, f].join('+');
 // "dGY="
-const dGYequalString = `${btoaFunction}(${teString})`;
-const G = `(${dGYequalString}[${val(1)}])`;
+const dGYequalString = `${btoaFunction}(${tfString})`;
+const G = `${dGYequalString}[${val(1)}]`;
 
 // "KQ=="
 const KQequalsString = `${btoaFunction}(${_openParen})`;
-const K = `(${KQequalsString}[${val(0)}])`;
+const K = `${KQequalsString}[${val(0)}]`;
 
 
 // "PA=="
 const PAqualsString = `${btoaFunction}(${_lessthan})`;
-const P = `(${PAqualsString}[${val(0)}])`;
+const P = `${PAqualsString}[${val(0)}]`;
 
 // "MTA="
 const MTAequalsString = `${btoaFunction}(${val(10)})`;
-const T = `(${MTAequalsString}[${val(1)}])`;
+const T = `${MTAequalsString}[${val(1)}]`;
 
 
 
 // "YQ=="
 const YQequalsString = `${btoaFunction}(${a})`;
-const Y = `(${YQequalsString}[${val(0)}])`;
-const Q = `(${YQequalsString}[${val(1)}])`;
+const Y = `${YQequalsString}[${val(0)}]`;
+const Q = `${YQequalsString}[${val(1)}]`;
 
 
 const documentString = [d, o, c, u, m, e, n, t].join('+');
@@ -239,56 +258,56 @@ const returnDocumentString = `(${returnString}+${_space}+${documentString})`;
 const documentObject = `(${functionMaker(returnDocumentString)})`;
 // "function HTMLDocument() { [native code] }"
 const documentObjectString = `(${documentObject}+[])`;
-const L = `(${documentObjectString}[${val(11)}])`;
-const D = `(${documentObjectString}[${val(12)}])`;
+const L = `${documentObjectString}[${val(11)}]`;
+const D = `${documentObjectString}[${val(12)}]`;
 
 // "fiN"
 const fiNString = [f, i, N].join('+');
 // "~#"
 const tildePoundString = `${atobFunction}(${fiNString})`;
-const _pound = `(${tildePoundString}[${val(1)}])`;
+const _pound = `${tildePoundString}[${val(1)}]`;
 
 // "fjr"
 const fjrString = [f, j, r].join('+');
 // "~:"
 const tildeColonString = `${atobFunction}(${fjrString})`;
-const _colon = `(${tildeColonString}[${val(1)}])`;
+const _colon = `${tildeColonString}[${val(1)}]`;
 
 // "fj8"
 const fj8String = [f, j, val(8)].join('+');
 // "~?"
 const tildeQuestionString = `${atobFunction}(${fj8String})`;
-const _question = `(${tildeQuestionString}[${val(1)}])`;
+const _question = `${tildeQuestionString}[${val(1)}]`;
 
 // "fic"
 const ficString = [f, i, c].join('+');
 // "~'"
 const tildeSingleQuoteString = `${atobFunction}(${ficString})`;
-const _singleQuote = `(${tildeSingleQuoteString}[${val(1)}])`;
+const _singleQuote = `${tildeSingleQuoteString}[${val(1)}]`;
 
 // "fia"
 const fiaString = [f, i, a].join('+');
 // "~&"
 const tildeAmpersandString = `${atobFunction}(${fiaString})`;
-const _ampersand = `(${tildeAmpersandString}[${val(1)}])`;
+const _ampersand = `${tildeAmpersandString}[${val(1)}]`;
 
 // "fi0"
 const fi0String = [f, i, val(0)].join('+');
 // "~-"
 const tildeMinusString = `${atobFunction}(${fi0String})`;
-const _minus = `(${tildeMinusString}[${val(1)}])`;
+const _minus = `${tildeMinusString}[${val(1)}]`;
 
 // "fit"
 const fitString = [f, i, t].join('+');
 // "~+"
 const tildePlusString = `${atobFunction}(${fitString})`;
-const _plus = `(${tildePlusString}[${val(1)}])`;
+const _plus = `${tildePlusString}[${val(1)}]`;
 
 // "fir"
 const firString = [f, i, r].join('+');
 // "~*"
 const tildeStarString = `${atobFunction}(${firString})`;
-const _asterisk = `(${tildeStarString}[${val(1)}])`;
+const _asterisk = `${tildeStarString}[${val(1)}]`;
 
 
 // "1/2"
@@ -297,7 +316,7 @@ const halfString = [val(1), _forwardSlash, val(2)].join('+');
 const returnHalfString = `(${returnString}+${_space}+${halfString})`;
 const zeroPointFive = `(${functionMaker(returnHalfString)})`;
 const zeroPointFiveString = `(${zeroPointFive}+[])`;
-const _period = `(${zeroPointFiveString}[${val(1)}])`;
+const _period = `${zeroPointFiveString}[${val(1)}]`;
 
 //===========================================================
 
