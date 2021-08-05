@@ -1,16 +1,20 @@
+// use for when strings are being concatenated and parens are needed for clarity
+function safeValue(n) {
+    return `(${val(n)})`
+}
+
 function val(n) {
     if (n === 0 || n === '0') {
-        return '(+[])';
+        return '+[]';
     }
     if (n < 10) {
-        return '(' + '+!![]'.repeat(n) + ')';
+        return '+!![]'.repeat(n);
     }
 
-    return '([]+'
+    return '[]+'
         + [...n.toString()]
-            .map(x => `${val(x)}`)
-            .join('+')
-        + ')';
+            .map(x => `(${val(x)})`)
+            .join('+');
 }
 
 const _1 = `(${val(1)}+[])`
@@ -157,15 +161,12 @@ const _comma = `([[]][${concat_String}]([[]])+[])`;
 
 // "return"
 const return_String = [r, e, t, u, r, n].join('+');
-
-const functionMaker = (func) =>
-    `([])[${at_String}][${constructor_String}](${func})()`;
-
+const functionMaker = (func) => `([])[${at_String}][${constructor_String}](${func})()`;
 
 // --------------------------
 
 // "self"
-const self_String = [s,e,l,f].join('+');
+const self_String = [s, e, l, f].join('+');
 // "return self"
 const returnSelf_String = `(${return_String}+${_space}+${self_String})`;
 const selfFunction = `${functionMaker(returnSelf_String)}`;
@@ -180,7 +181,7 @@ const W = `(${NaN_windowObjectString})[${val(11)}]`;
 // --------------------------
 
 // "statusbar"
-const statusbar_String = [s,t,a,t,u,s,b,a,r].join('+');
+const statusbar_String = [s, t, a, t, u, s, b, a, r].join('+');
 // "return statusbar"
 const returnStatusbar_String = `(${return_String}+${_space}+${statusbar_String})`;
 const statusbarFunction = `${functionMaker(returnStatusbar_String)}`;
@@ -220,17 +221,25 @@ const dW5kZWZpbmVk_String = `${btoaFunction}(${UNDEFINED})`
 const k = `${dW5kZWZpbmVk_String}[${val(3)}]`;
 const V = `${dW5kZWZpbmVk_String}[${val(10)}]`;
 
+
+// TODO: If can find k cheaper. Need to reduce cost of k (or others) by about 95
+// // "link"
+// const link_String = [l, i, n, k].join('+');
+// // "<a href=\"undefined\"></a>"
+// const link_String_String = `(${empty_String}[${link_String}]())`;
+// const h2 = `${link_String_String}[${val(3)}]`;
+
+
 // "truedW5kZWZpbmVk"
 const true_dW5kZWZpbmVk_String = [TRUE, dW5kZWZpbmVk_String].join('+'); // add true to reduce cost of index
 const p = `(${true_dW5kZWZpbmVk_String})[${val(11)}]`;
 
-// "truefalse"
-const truefalse_String = `${TRUE}+[]+${FALSE}`;
-// "dHJ1ZWZhbHNl"
-const dHJ1ZWZhbHNl_String = `${btoaFunction}(${truefalse_String})`;
-// "truedHJ1ZWZhbHNl"
-const true_dHJ1ZWZhbHNl_String = [TRUE, dHJ1ZWZhbHNl_String].join('+'); // add true to reduce cost of index
-const h = `(${true_dHJ1ZWZhbHNl_String})[${val(11)}]`;
+// "aNaN"
+const aNaN_String = `${a}+(${NAN})`;
+// "hÖ"
+const hOStuff_String = `${atobFunction}(${aNaN_String})`;
+const h = `${hOStuff_String}[${val(0)}]`;
+
 
 // "truetrue"
 const truetrue_String = `${TRUE}+[]+${TRUE}`;
@@ -255,7 +264,7 @@ const ca_String = [c, a].join('+');
 const q = `${atobFunction}(${ca_String})`;
 
 // "f31"
-const f31_String = [f, val(3), val(1)].join('+');
+const f31_String = [f, safeValue(3), safeValue(1)].join('+');
 // "ZjMx"
 const ZjMx_String = `${btoaFunction}(${f31_String})`;
 const x = `${ZjMx_String}[${val(3)}]`;
@@ -284,9 +293,9 @@ const G = `${dGYequal_String}[${val(1)}]`;
 const KQequals_String = `${btoaFunction}(${_openParen})`;
 const K = `${KQequals_String}[${val(0)}]`;
 
-// "MTA="
-const MTAequals_String = `${btoaFunction}(${val(10)})`;
-const T = `${MTAequals_String}[${val(1)}]`;
+// "TmFO"
+const TmFO_String = `${btoaFunction}(${NAN})`;
+const T = `${TmFO_String}[${val(0)}]`;
 
 // "YQ=="
 const YQequals_String = `${btoaFunction}(${a})`;
@@ -303,7 +312,7 @@ const documentObject_String = `(${documentObject}+[])`;
 const L = `${documentObject_String}[${val(11)}]`;
 
 // "t0"
-const t0_String = [t, val(0)].join('+');
+const t0_String = [t, safeValue(0)].join('+');
 // "dDA="
 const dDAequals_String = `${btoaFunction}(${t0_String})`;
 const D = `${dDAequals_String}[${val(1)}]`;
@@ -321,7 +330,7 @@ const tildeColon_String = `${atobFunction}(${fjr_String})`;
 const _colon = `${tildeColon_String}[${val(1)}]`;
 
 // "fj8"
-const fj8_String = [f, j, val(8)].join('+');
+const fj8_String = [f, j, safeValue(8)].join('+');
 // "~?"
 const tildeQuestion_String = `${atobFunction}(${fj8_String})`;
 const _question = `${tildeQuestion_String}[${val(1)}]`;
@@ -339,7 +348,7 @@ const tildeAmpersand_String = `${atobFunction}(${fia_String})`;
 const _ampersand = `${tildeAmpersand_String}[${val(1)}]`;
 
 // "fi0"
-const fi0_String = [f, i, val(0)].join('+');
+const fi0_String = [f, i, safeValue(0)].join('+');
 // "~-"
 const tildeMinus_String = `${atobFunction}(${fi0_String})`;
 const _minus = `${tildeMinus_String}[${val(1)}]`;
@@ -357,11 +366,11 @@ const tildeStar_String = `${atobFunction}(${fir_String})`;
 const _asterisk = `${tildeStar_String}[${val(1)}]`;
 
 
-// "1/2"
-const half_String = [val(1), _forwardSlash, val(2)].join('+');
-// "return 1/2"
-const returnHalf_String = `(${return_String}+${_space}+${half_String})`;
-const zeroPointFive = `(${functionMaker(returnHalf_String)})`;
+// "true/2" (equivalent to "1/2")
+const half_String = [TRUE, _forwardSlash, safeValue(2)].join('+');
+// "return true/2"
+const returnHalf_String = `${return_String}+${_space}+${half_String}`;
+const zeroPointFive = `${functionMaker(returnHalf_String)}`;
 const zeroPointFive_String = `(${zeroPointFive}+[])`;
 const _period = `${zeroPointFive_String}[${val(1)}]`;
 
@@ -522,7 +531,7 @@ const test5 = eval(convertText('@')) === '@';
 const testAll = test1 && test2 && test3 && test4 && test5;
 
 console.log(sizeMap);
-// console.log(sizeMap.sort((a,b)=>(b[1]-a[1])));
+// console.log(sizeMap.sort((a, b) => (b[1] - a[1])));
 console.log('tests pass: ', testAll);
 
 // ==================================================================================================
