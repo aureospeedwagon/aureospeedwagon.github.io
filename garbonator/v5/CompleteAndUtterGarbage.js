@@ -471,20 +471,10 @@ garboMap.set(`
 
 //=================================
 
-// "name"
-const name_String = [n, a, m, e].join('+');
-// "String"
-const String_String = `${empty_String}[${constructor_String}][${name_String}]`;
-// String["fromCodePoint"]
-const fromCodePointFunction =
-    [
-        String_String,
-        _openSquare, _doubleQuote,
-        f, r, o, m, C, o, d, e, P, o, i, n, t,
-        _doubleQuote, _closeSquare
-    ].join('+');
-
-const returnFromCodePointFunction = `(${return_String}+${_space}+${fromCodePointFunction})`;
+// "fromCodePoint"
+const fromCodePoint_String = [f, r, o, m, C, o, d, e, P, o, i, n, t].join('+');
+// String.fromCodePoint
+const fromCodePointFunction = `([]+[])[${constructor_String}][${fromCodePoint_String}]`
 
 function convertText(val) {
     return [...val]
@@ -494,9 +484,9 @@ function convertText(val) {
 
 
 function getCodePoint(x) {
-    const codepoint_String = x.codePointAt(0) + [];
-    const convertedPoint_String = convertText(codepoint_String);
-    return `(${functionMaker(returnFromCodePointFunction)})(${convertedPoint_String})`;
+    const codepoint = x.codePointAt(0);
+    const convertedPoint_String = val(codepoint);
+    return `${fromCodePointFunction}(${convertedPoint_String})`;
 }
 
 function convertCode(text) {
@@ -514,9 +504,9 @@ function convertFile(dataUrl) {
 
 
 // diagonstics ======================================================================================
-const sizeMap = [];
-garboMap.forEach((v, k) => sizeMap.push([k, v.length]));
-sizeMap.push(['@', convertText('@').length]);
+const sizeMap = new Map();
+garboMap.forEach((v, k) => sizeMap.set(k, v.length));
+sizeMap.set('@', convertText('@').length);
 
 const test_String1 = 'abcdefghijklmnopqrstuvwxyz';
 const test_String2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -530,8 +520,9 @@ const test4 = eval(convertText(test_String4)) === test_String4;
 const test5 = eval(convertText('@')) === '@';
 const testAll = test1 && test2 && test3 && test4 && test5;
 
-console.log(sizeMap);
-// console.log(sizeMap.sort((a, b) => (b[1] - a[1])));
+// console.log(sizeMap);
+console.log(Array.from(sizeMap.entries()));
+// console.log(Array.from(sizeMap.entries()).sort((a,b)=> a[1]-b[1]));
 console.log('tests pass: ', testAll);
 
 // ==================================================================================================
