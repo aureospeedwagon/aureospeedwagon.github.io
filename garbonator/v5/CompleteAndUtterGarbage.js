@@ -27,11 +27,14 @@ const _0 = `(${val(0)}+[])`
 const FALSE = '![]';
 const TRUE = '!![]';
 const UNDEFINED = '[][[]]';
+const NAN = `+${UNDEFINED}`;
 
 const true_String = `(${TRUE}+[])`;
 const false_String = `(${FALSE}+[])`;
 const undefined_String = `(${UNDEFINED}+[])`;
 const empty_String = '([]+[])'
+const NaN_String = `(${NAN}+[])`;
+
 
 const a = `${false_String}[${val(1)}]`;
 const d = `${undefined_String}[${val(2)}]`;
@@ -43,6 +46,8 @@ const r = `${true_String}[${val(1)}]`;
 const s = `${false_String}[${val(3)}]`;
 const t = `${true_String}[${val(0)}]`;
 const u = `${undefined_String}[${val(0)}]`;
+
+const N = `${NaN_String}[${val(0)}]`;
 
 // "falseundefined", cheaper to get the 10th rather than the 5th
 const falseUndefined_String = `(${FALSE}+[]+${UNDEFINED})`;
@@ -63,9 +68,14 @@ const _closeCurly = `${atFunction_String}[${val(30)}]`;
 // "truefunction at() { [native code] }"
 const true_AtFunction_String = [TRUE, atFunction_String].join('+')
 const o = `(${true_AtFunction_String})[${val(10)}]`;
-const _space = `(${true_AtFunction_String})[${val(12)}]`;
 const _openSquare = `(${true_AtFunction_String})[${val(20)}]`;
-const _closeSquare = `(${true_AtFunction_String})[${val(32)}]`;
+
+// by adding NaN to the start, we can make a net gain by reducing the cost of the index
+// "NaNfunction at() { [native code] }"
+const nan_AtFunction_String = [NAN, atFunction_String].join('+')
+const _space = `(${nan_AtFunction_String})[${val(11)}]`;
+const _closeSquare = `(${nan_AtFunction_String})[${val(31)}]`;
+
 
 // "italics"
 const italics_String = [i, t, a, l, i, c, s].join('+');
@@ -85,40 +95,36 @@ const _equals = `${fontcolor_String_String}[${val(11)}]`;
 // "constructor"
 const constructor_String = [c, o, n, s, t, r, u, c, t, o, r].join('+');
 
-// "function _String() { [native code] }"
+// "function String() { [native code] }"
 const stringConstructor_String = `(${empty_String}[${constructor_String}]+[])`;
 const g = `${stringConstructor_String}[${val(14)}]`;
-// "truefunction _String() { [native code] }"
-const true_StringConstructor_String = [TRUE, stringConstructor_String].join('+');
-const S = `(${true_StringConstructor_String})[${val(13)}]`;
+// "NaNfunction String() { [native code] }"
+const NaN_StringConstructor_String = [NAN, stringConstructor_String].join('+');
+const S = `(${NaN_StringConstructor_String})[${val(12)}]`;
 
 // "function Array() { [native code] }"
 const arrayConstructor_String = `([][${constructor_String}]+[])`;
 const y = `${arrayConstructor_String}[${val(13)}]`;
-// "truefunction Array() { [native code] }"
-const true_ArrayConstructor_String = [TRUE, arrayConstructor_String].join('+');
-const A = `(${true_ArrayConstructor_String})[${val(13)}]`;
+// "NaNfunction Array() { [native code] }"
+const NaN_ArrayConstructor_String = [NAN, arrayConstructor_String].join('+');
+const A = `(${NaN_ArrayConstructor_String})[${val(12)}]`;
 
 // "function Number() { [native code] }"
 const numberConstructor_String = `((+[])[${constructor_String}]+[])`;
 const b = `${numberConstructor_String}[${val(12)}]`;
 const m = `${numberConstructor_String}[${val(11)}]`;
-// "truefunction Number() { [native code] }"
-const true_NumberConstructor_String = [TRUE, numberConstructor_String].join('+');
-const N = `(${true_NumberConstructor_String})[${val(13)}]`;
-
 
 // "function Boolean() { [native code] }"
 const booleanConstructor_String = `((![])[${constructor_String}]+[])`;
-// "truefunction Boolean() { [native code] }"
-const true_BooleanConstructor_String = [TRUE, booleanConstructor_String].join('+');
-const B = `(${true_BooleanConstructor_String})[${val(13)}]`;
+// "NaNfunction Boolean() { [native code] }"
+const NaN_BooleanConstructor_String = [NAN, booleanConstructor_String].join('+');
+const B = `(${NaN_BooleanConstructor_String})[${val(12)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructor_String = `([][${at_String}][${constructor_String}]+[])`;
-// "truefunction Function() { [native code] }"
-const true_FunctionConstructor_String = [TRUE, functionConstructor_String].join('+');
-const F = `(${true_FunctionConstructor_String})[${val(13)}]`;
+// "NaNfunction Function() { [native code] }"
+const NaN_FunctionConstructor_String = [NAN, functionConstructor_String].join('+');
+const F = `(${NaN_FunctionConstructor_String})[${val(12)}]`;
 
 
 // `function anonymous(
@@ -140,9 +146,9 @@ const I = `${objectArrayIterator_String}[${val(14)}]`;
 const object = `([][${entries_String}]()[${constructor_String}]())`;
 //"function Object() { [native code] }"
 const objectConstructor_String = `([][${entries_String}]()[${constructor_String}]+[])`;
-// "truefunction Object() { [native code] }"
-const true_ObjectConstructor_String = [TRUE, objectConstructor_String].join('+');
-const O = `(${true_ObjectConstructor_String})[${val(13)}]`;
+// "NaNfunction Object() { [native code] }"
+const NaN_ObjectConstructor_String = [NAN, objectConstructor_String].join('+');
+const O = `(${NaN_ObjectConstructor_String})[${val(12)}]`;
 
 // "concat"
 const concat_String = [c, o, n, c, a, t].join('+');
@@ -154,6 +160,36 @@ const return_String = [r, e, t, u, r, n].join('+');
 
 const functionMaker = (func) =>
     `([])[${at_String}][${constructor_String}](${func})()`;
+
+
+// --------------------------
+
+// "self"
+const self_String = [s,e,l,f].join('+');
+// "return self"
+const returnSelf_String = `(${return_String}+${_space}+${self_String})`;
+const selfFunction = `${functionMaker(returnSelf_String)}`;
+
+// "[object Window]"
+const windowObjectString = `${selfFunction}+[]`;
+const w = `(${windowObjectString})[${val(13)}]`;
+const NaN_windowObjectString = `${NAN}+${selfFunction}+[]`;
+const W = `(${NaN_windowObjectString})[${val(11)}]`;
+
+
+// --------------------------
+
+// "statusbar"
+const statusbar_String = [s,t,a,t,u,s,b,a,r].join('+');
+// "return statusbar"
+const returnStatusbar_String = `(${return_String}+${_space}+${statusbar_String})`;
+const statusbarFunction = `${functionMaker(returnStatusbar_String)}`;
+
+// "[object BarProp]"
+const barpropObjectString = `${statusbarFunction}+[]`;
+const P = `(${barpropObjectString})[${val(11)}]`;
+
+// --------------------------
 
 // "atob"
 const atob_String = [a, t, o, b].join('+');
@@ -181,7 +217,6 @@ const U = `${ZmFsc2Uequal_String}[${val(6)}]`;
 
 // "dW5kZWZpbmVk"
 const dW5kZWZpbmVk_String = `${btoaFunction}(${UNDEFINED})`
-const W = `${dW5kZWZpbmVk_String}[${val(1)}]`;
 const k = `${dW5kZWZpbmVk_String}[${val(3)}]`;
 const V = `${dW5kZWZpbmVk_String}[${val(10)}]`;
 
@@ -219,10 +254,6 @@ const X = `${MXQequal_String}[${val(1)}]`;
 const ca_String = [c, a].join('+');
 const q = `${atobFunction}(${ca_String})`;
 
-// "Mw=="
-const Mwequals_String = `${btoaFunction}(${val(3)})`;
-const w = `${Mwequals_String}[${val(1)}]`;
-
 // "f31"
 const f31_String = [f, val(3), val(1)].join('+');
 // "ZjMx"
@@ -253,16 +284,9 @@ const G = `${dGYequal_String}[${val(1)}]`;
 const KQequals_String = `${btoaFunction}(${_openParen})`;
 const K = `${KQequals_String}[${val(0)}]`;
 
-
-// "PA=="
-const PAquals_String = `${btoaFunction}(${_lessthan})`;
-const P = `${PAquals_String}[${val(0)}]`;
-
-
 // "MTA="
 const MTAequals_String = `${btoaFunction}(${val(10)})`;
 const T = `${MTAequals_String}[${val(1)}]`;
-
 
 // "YQ=="
 const YQequals_String = `${btoaFunction}(${a})`;
@@ -274,7 +298,7 @@ const document_String = [d, o, c, u, m, e, n, t].join('+');
 // "return document"
 const returnDocument_String = `(${return_String}+${_space}+${document_String})`;
 const documentObject = `(${functionMaker(returnDocument_String)})`;
-// "function HTMLDocument() { [native code] }"
+// "[object HTMLDocument]"
 const documentObject_String = `(${documentObject}+[])`;
 const L = `${documentObject_String}[${val(11)}]`;
 
