@@ -474,12 +474,84 @@ garboMap.set(`
 // "fromCodePoint"
 const fromCodePoint_String = [f, r, o, m, C, o, d, e, P, o, i, n, t].join('+');
 // String.fromCodePoint
-const fromCodePointFunction = `([]+[])[${constructor_String}][${fromCodePoint_String}]`
+const fromCodePointFunction = `([]+[])[${constructor_String}][${fromCodePoint_String}]`;
 
-function convertText(val) {
-    return [...val]
+// "split"
+const split_String = [s, p, l, i, t].join('+');
+// "map"
+const map_String = [m, a, p].join('+');
+// "match"
+const match_String = [m, a, t, c, h].join('+');
+// "join"
+const join_String = [j, o, i, n].join('+');
+
+
+// =================================================
+
+
+
+// =================================================
+
+function convertText(value) {
+
+    const noncomp = convertTextNonCompressed(value);
+    if (noncomp.length < 15000) {
+        return noncomp;
+    }
+    const comp = convertTextCompressed(value);
+    // console.log('noncomp', noncomp.length);
+    // console.log('comp', comp.length);
+
+    if (comp.length < noncomp.length) {
+        console.log('return comp', 100 - Math.floor(100 * (comp.length / noncomp.length)));
+        return comp;
+    } else {
+        // console.log('return noncomp');
+        return noncomp;
+    }
+}
+
+function convertTextNonCompressed(value) {
+    return [...value]
         .map(x => garboMap.get(x) || getCodePoint(x))
         .join`+`;
+}
+
+// TODO: reduce cost? not sure how yet
+const decompressFunctionCode = convertCode(`return f=>f[1]-1?f["toUpperCase"]()[0]:f[0]`);
+const matchTwo = convertCode(`return /.{2}/g`);
+
+
+function compressionFunction(x) {
+    const lowercase = x.toLowerCase();
+    const lowerCaseNotWorth = garboMap.get(x.toUpperCase()).length - garboMap.get(x).length < 0;
+
+    if (lowerCaseNotWorth) {
+        return x + '1';
+    }
+
+    const suffix = x === lowercase ? '1' : '0'
+    return lowercase + suffix;
+}
+
+
+function convertTextCompressed(value) {
+    if (!value.length) {
+        return '';
+    }
+    const valArray = [...value]; // convert to array of characters
+
+
+    const nValArray = valArray.map(compressionFunction); // convert lowercase
+
+    // no need to recurse here since compressing lowercase and numbers is effectively worthless.
+    const garbo = convertTextNonCompressed(nValArray.join(''));
+
+    const compressed = `(${garbo})`
+        + `[${match_String}](${matchTwo})`
+        + `[${map_String}](${decompressFunctionCode})` //convert back to proper casing
+        + `[${join_String}](${empty_String})`; //join back to make string
+    return compressed;
 }
 
 
@@ -490,16 +562,14 @@ function getCodePoint(x) {
 }
 
 function convertCode(text) {
-    return functionMaker(convertText(`${text}`))
+    return functionMaker(convertTextNonCompressed(`${text}`))
 }
 
 // TODO: make simpler?
 function convertFile(dataUrl) {
-    const fileFunction = `
-    const f = window.open();
-    f.document.body.innerHTML = '<iframe src="${dataUrl}" style="border:none "width="100vw" height="100vh"></iframe>';
-    `;
-    return functionMaker(convertText(`${fileFunction}`));
+    const fileFunction = `const f = window.open();f.document.body.innerHTML = '<iframe src="${dataUrl}" style="border:none "width="100vw" height="100vh"></iframe>';`;
+    const converted = convertText(fileFunction);
+    return functionMaker(converted);
 }
 
 
@@ -508,15 +578,15 @@ const sizeMap = new Map();
 garboMap.forEach((v, k) => sizeMap.set(k, v.length));
 sizeMap.set('@', convertText('@').length);
 
-const test_String1 = 'abcdefghijklmnopqrstuvwxyz';
-const test_String2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const test_String3 = '1234567890';
-const test_String4 = ` (){}[]<>/=".',#?:&-*`;
+const testString1 = 'abcdefghijklmnopqrstuvwxyz';
+const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const testString3 = '1234567890';
+const testString4 = ` (){}[]<>/=".',#?:&-*`;
 
-const test1 = eval(convertText(test_String1)) === test_String1;
-const test2 = eval(convertText(test_String2)) === test_String2;
-const test3 = eval(convertText(test_String3)) === test_String3;
-const test4 = eval(convertText(test_String4)) === test_String4;
+const test1 = eval(convertText(testString1)) === testString1;
+const test2 = eval(convertText(testString2)) === testString2;
+const test3 = eval(convertText(testString3)) === testString3;
+const test4 = eval(convertText(testString4)) === testString4;
 const test5 = eval(convertText('@')) === '@';
 const testAll = test1 && test2 && test3 && test4 && test5;
 
@@ -527,7 +597,7 @@ console.log('tests pass: ', testAll);
 
 // ==================================================================================================
 
-// HTML/CSS
+// functions
 
 async function garbonate() {
     const inp = document.getElementById('i');
@@ -540,43 +610,13 @@ async function garbonate() {
     } else if (mode === 'file') {
         const dataUrl = await getDataUrl();
         out.innerText = convertFile(dataUrl);
+        // } else if (mode === 'ctext') {
+        //     out.innerText = convertTextCOMPRESS(inp.value)
     } else {
         out.innerText = convertText(inp.value)
     }
 };
 
-document.body.style.background = 'black';
-document.body.style.fontFamily = 'Consolas';
-
-const hr = document.createElement('div');
-hr.style.display = 'flex';
-hr.style.flexDirection = 'row';
-
-const hm = document.createElement('div');
-hm.style.width = '100px';
-
-const ht = document.createElement('textarea');
-ht.id = 'i';
-ht.style.width = "calc(100vw - 420px)";
-ht.style.height = '70px';
-ht.style.background = 'black';
-ht.style.color = '#00beef';
-ht.style.border = '1px solid ' + '#00beef';
-ht.style.borderImage = 'none';
-ht.style.resize = 'none';
-
-const ho = document.createElement('p');
-ho.id = 'o';
-ho.style.width = '100%';
-ho.style.height = '80%';
-ho.style.color = '#00beef';
-ho.style.fontSize = '14px';
-ho.style.fontFamily = 'Consolas';
-
-
-
-const hf = document.createElement('input');
-hf.type = 'file';
 
 async function readFileAsDataURL(file) {
     let result_base64 = await new Promise((resolve) => {
@@ -588,130 +628,181 @@ async function readFileAsDataURL(file) {
 }
 
 async function getDataUrl() {
-    const fileThing = hf.files.item(0);
+    const fileThing = fileInput.files.item(0);
     return await readFileAsDataURL(fileThing);
 }
 
-const hm1 = document.createElement('input');
-hm1.type = 'radio';
-hm1.name = 'mode'
-hm1.value = 'text';
-hm1.checked = true;
+// HTML --------------------------------------
 
-const hm1l = document.createElement('label');
-hm1l.for = 'text';
-hm1l.innerHTML = 'Text';
-hm1l.style.color = '#00beef';
-hm1l.style.fontSize = '12px';
+document.body.style.background = 'black';
+document.body.style.fontFamily = 'Consolas';
 
-const hm2 = document.createElement('input');
-hm2.type = 'radio';
-hm2.name = 'mode';
-hm2.value = 'code';
+const mainArea = document.createElement('div');
+mainArea.style.display = 'flex';
+mainArea.style.flexDirection = 'row';
 
-const hm2l = document.createElement('label');
-hm2l.for = 'code';
-hm2l.innerHTML = 'Code';
-hm2l.style.color = '#00beef';
-hm2l.style.fontSize = '12px';
+const modeArea = document.createElement('div');
+modeArea.style.width = '100px';
 
-const hm3 = document.createElement('input');
-hm3.type = 'radio';
-hm3.name = 'mode';
-hm3.value = 'file';
+const textArea = document.createElement('textarea');
+textArea.id = 'i';
+textArea.style.width = "calc(100vw - 420px)";
+textArea.style.height = '70px';
+textArea.style.background = 'black';
+textArea.style.color = '#00beef';
+textArea.style.border = '1px solid ' + '#00beef';
+textArea.style.borderImage = 'none';
+textArea.style.resize = 'none';
 
-const hm3l = document.createElement('label');
-hm3l.for = 'file';
-hm3l.innerHTML = 'File (Exp)';
-hm3l.style.color = '#00beef';
-hm3l.style.fontSize = '12px';
-
-const hmb = document.createElement('br');
-
-hm.appendChild(hm1);
-hm.appendChild(hm1l);
-hm.appendChild(hmb);
-hm.appendChild(hm2);
-hm.appendChild(hm2l);
-hm.appendChild(hmb);
-// hm.appendChild(hm3);
-// hm.appendChild(hm3l);
-// hm.appendChild(hf);
+const outputArea = document.createElement('p');
+outputArea.id = 'o';
+outputArea.style.width = '100%';
+outputArea.style.height = '80%';
+outputArea.style.color = '#00beef';
+outputArea.style.fontSize = '14px';
+outputArea.style.fontFamily = 'Consolas';
 
 
-const hb = document.createElement('button');
-hb.onclick = garbonate;
-hb.style.background = '#00beef';
-hb.style.border = 'none';
-hb.style.fontFamily = 'fantasy';
-hb.style.fontSize = '45px';
-hb.style.width = '320px';
-hb.style.cursor = 'pointer';
-hb.innerText = 'GARBONATE';
-hb.style.display = 'flex';
-hb.style.flexDirection = 'row';
-hb.style.justifyContent = 'space-around';
 
-const hg = document.createElement('div');
-hg.style.flexDirection = 'column';
-hg.style.width = '50px';
-hg.style.paddingLeft = '10px';
+const fileInput = document.createElement('input');
+fileInput.type = 'file';
 
-const hh = document.createElement('div');
-hh.style.flex = '0 1 5%';
-hh.style.background = 'black';
-hh.style.width = '30%';
-hh.style.borderTopLeftRadius = '5px';
-hh.style.borderTopRightRadius = '5px';
-hh.style.left = '50%';
-hh.style.transform = 'translateX(-50%)';
-hh.style.height = '5px';
-hh.style.position = 'relative';
-hh.style.top = '1px';
+const textModeRadio = document.createElement('input');
+textModeRadio.type = 'radio';
+textModeRadio.name = 'mode'
+textModeRadio.value = 'text';
+textModeRadio.checked = true;
 
-const hl = document.createElement('div');
-hl.style.flex = '0 1 10%';
-hl.style.background = 'black';
-hl.style.width = '100%';
-hl.style.borderTopLeftRadius = '5px';
-hl.style.borderTopRightRadius = '5px';
-hl.style.height = '10px';
-hl.style.borderBottom = '2px solid ' + '#00beef';
+const textModeLabel = document.createElement('label');
+textModeLabel.for = 'text';
+textModeLabel.innerHTML = 'Text';
+textModeLabel.style.color = '#00beef';
+textModeLabel.style.fontSize = '12px';
 
-const hc = document.createElement('div');
-hc.style.display = 'flex';
-hc.style.flexDirection = 'row';
-hc.style.justifyContent = 'space-around';
-hc.style.background = 'black';
-hc.style.width = '95%';
-hc.style.left = '50%';
-hc.style.transform = 'translateX(-50%)';
-hc.style.flex = '0 1 85%';
-hc.style.borderBottomLeftRadius = '5px';
-hc.style.borderBottomRightRadius = '5px';
-hc.style.position = 'relative';
+const compressModeRadio = document.createElement('input');
+compressModeRadio.type = 'radio';
+compressModeRadio.name = 'mode'
+compressModeRadio.value = 'ctext';
 
-const hv1 = document.createElement('div');
-hv1.style.height = '29px';
-hv1.style.width = '5%';
-hv1.style.borderRadius = '5px';
-hv1.style.background = '#00beef';
-hv1.style.marginTop = '5px';
-hv1.style.marginBottom = '5px';
+const compressModeLabel = document.createElement('label');
+compressModeLabel.for = 'ctext';
+compressModeLabel.innerHTML = 'cText';
+compressModeLabel.style.color = '#00beef';
+compressModeLabel.style.fontSize = '12px';
 
-hv2 = hv1.cloneNode();
-hv3 = hv1.cloneNode();
+const codeModeRadio = document.createElement('input');
+codeModeRadio.type = 'radio';
+codeModeRadio.name = 'mode';
+codeModeRadio.value = 'code';
 
-hc.appendChild(hv1);
-hc.appendChild(hv2);
-hc.appendChild(hv3);
-hg.appendChild(hh);
-hg.appendChild(hl);
-hg.appendChild(hc);
-hb.appendChild(hg);
+const codeModeLabel = document.createElement('label');
+codeModeLabel.for = 'code';
+codeModeLabel.innerHTML = 'Code';
+codeModeLabel.style.color = '#00beef';
+codeModeLabel.style.fontSize = '12px';
 
-hr.appendChild(hm);
-hr.appendChild(ht);
-hr.appendChild(hb);
-document.body.appendChild(hr);
-document.body.appendChild(ho);
+const fileModeRadio = document.createElement('input');
+fileModeRadio.type = 'radio';
+fileModeRadio.name = 'mode';
+fileModeRadio.value = 'file';
+
+const fileModeLabel = document.createElement('label');
+fileModeLabel.for = 'file';
+fileModeLabel.innerHTML = 'File (Exp)';
+fileModeLabel.style.color = '#00beef';
+fileModeLabel.style.fontSize = '12px';
+
+
+modeArea.appendChild(textModeRadio);
+modeArea.appendChild(textModeLabel);
+modeArea.appendChild(document.createElement('br'));
+// modeArea.appendChild(compressModeRadio);
+// modeArea.appendChild(compressModeLabel);
+// modeArea.appendChild(document.createElement('br'));
+modeArea.appendChild(codeModeRadio);
+modeArea.appendChild(codeModeLabel);
+modeArea.appendChild(document.createElement('br'));
+// modeArea.appendChild(fileModeRadio);
+// modeArea.appendChild(fileModeLabel);
+// modeArea.appendChild(fileInput);
+// modeArea.appendChild(document.createElement('br'));
+
+
+const garboButton = document.createElement('button');
+garboButton.className = "garbobutton";
+garboButton.onclick = garbonate;
+garboButton.style.background = '#00beef';
+garboButton.style.border = 'none';
+garboButton.style.fontFamily = 'fantasy';
+garboButton.style.fontSize = '45px';
+garboButton.style.width = '320px';
+garboButton.style.cursor = 'pointer';
+garboButton.innerText = 'GARBONATE';
+garboButton.style.display = 'flex';
+garboButton.style.flexDirection = 'row';
+garboButton.style.justifyContent = 'space-around';
+
+const trash = document.createElement('div');
+trash.className = "hg";
+trash.style.flexDirection = 'column';
+trash.style.width = '50px';
+trash.style.paddingLeft = '10px';
+
+const trashHandle = document.createElement('div');
+trashHandle.style.flex = '0 1 5%';
+trashHandle.style.background = 'black';
+trashHandle.style.width = '30%';
+trashHandle.style.borderTopLeftRadius = '5px';
+trashHandle.style.borderTopRightRadius = '5px';
+trashHandle.style.left = '50%';
+trashHandle.style.transform = 'translateX(-50%)';
+trashHandle.style.height = '5px';
+trashHandle.style.position = 'relative';
+trashHandle.style.top = '1px';
+
+const trashLid = document.createElement('div');
+trashLid.style.flex = '0 1 10%';
+trashLid.style.background = 'black';
+trashLid.style.width = '100%';
+trashLid.style.borderTopLeftRadius = '5px';
+trashLid.style.borderTopRightRadius = '5px';
+trashLid.style.height = '10px';
+trashLid.style.borderBottom = '2px solid ' + '#00beef';
+
+const trashCan = document.createElement('div');
+trashCan.style.display = 'flex';
+trashCan.style.flexDirection = 'row';
+trashCan.style.justifyContent = 'space-around';
+trashCan.style.background = 'black';
+trashCan.style.width = '95%';
+trashCan.style.left = '50%';
+trashCan.style.transform = 'translateX(-50%)';
+trashCan.style.flex = '0 1 85%';
+trashCan.style.borderBottomLeftRadius = '5px';
+trashCan.style.borderBottomRightRadius = '5px';
+trashCan.style.position = 'relative';
+
+const trashBar1 = document.createElement('div');
+trashBar1.style.height = '29px';
+trashBar1.style.width = '5%';
+trashBar1.style.borderRadius = '5px';
+trashBar1.style.background = '#00beef';
+trashBar1.style.marginTop = '5px';
+trashBar1.style.marginBottom = '5px';
+
+trashBar2 = trashBar1.cloneNode();
+trashBar3 = trashBar1.cloneNode();
+
+trashCan.appendChild(trashBar1);
+trashCan.appendChild(trashBar2);
+trashCan.appendChild(trashBar3);
+trash.appendChild(trashHandle);
+trash.appendChild(trashLid);
+trash.appendChild(trashCan);
+garboButton.appendChild(trash);
+
+mainArea.appendChild(modeArea);
+mainArea.appendChild(textArea);
+mainArea.appendChild(garboButton);
+document.body.appendChild(mainArea);
+document.body.appendChild(outputArea);
