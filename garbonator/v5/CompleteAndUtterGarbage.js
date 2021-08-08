@@ -570,12 +570,18 @@ const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const testString3 = '1234567890';
 const testString4 = ` (){}[]<>/=".',#?:&-*`;
 
-const test1 = eval(convertText(testString1)) === testString1;
-const test2 = eval(convertText(testString2)) === testString2;
-const test3 = eval(convertText(testString3)) === testString3;
-const test4 = eval(convertText(testString4)) === testString4;
-const test5 = eval(convertText('@')) === '@';
-const testAll = test1 && test2 && test3 && test4 && test5;
+const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
+const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
+const test3 = eval(convertTextNonCompressed(testString3)) === testString3;
+const test4 = eval(convertTextNonCompressed(testString4)) === testString4;
+const test5 = eval(convertTextNonCompressed('@')) === '@';
+const test1b = eval(convertTextCompressed(testString1)) === testString1;
+const test2b = eval(convertTextCompressed(testString2)) === testString2;
+const test3b = eval(convertTextCompressed(testString3)) === testString3;
+const test4b = eval(convertTextCompressed(testString4)) === testString4;
+const test5b = eval(convertTextCompressed('@')) === '@';
+const testAll = test1 && test2 && test3 && test4 && test5
+    && test1b && test2b && test3b && test4b && test5b;
 
 // console.log(sizeMap);
 console.log(Array.from(sizeMap.entries()));
@@ -597,8 +603,6 @@ async function garbonate() {
     } else if (mode === 'file') {
         const dataUrl = await getDataUrl();
         out.innerText = convertFile(dataUrl);
-        // } else if (mode === 'ctext') {
-        //     out.innerText = convertTextCOMPRESS(inp.value)
     } else {
         out.innerText = convertText(inp.value)
     }
@@ -666,17 +670,6 @@ textModeLabel.innerHTML = 'Text';
 textModeLabel.style.color = '#00beef';
 textModeLabel.style.fontSize = '12px';
 
-const compressModeRadio = document.createElement('input');
-compressModeRadio.type = 'radio';
-compressModeRadio.name = 'mode'
-compressModeRadio.value = 'ctext';
-
-const compressModeLabel = document.createElement('label');
-compressModeLabel.for = 'ctext';
-compressModeLabel.innerHTML = 'cText';
-compressModeLabel.style.color = '#00beef';
-compressModeLabel.style.fontSize = '12px';
-
 const codeModeRadio = document.createElement('input');
 codeModeRadio.type = 'radio';
 codeModeRadio.name = 'mode';
@@ -695,7 +688,7 @@ fileModeRadio.value = 'file';
 
 const fileModeLabel = document.createElement('label');
 fileModeLabel.for = 'file';
-fileModeLabel.innerHTML = 'File (Exp)';
+fileModeLabel.innerHTML = 'Image (Exp)';
 fileModeLabel.style.color = '#00beef';
 fileModeLabel.style.fontSize = '12px';
 
@@ -703,9 +696,6 @@ fileModeLabel.style.fontSize = '12px';
 modeArea.appendChild(textModeRadio);
 modeArea.appendChild(textModeLabel);
 modeArea.appendChild(document.createElement('br'));
-// modeArea.appendChild(compressModeRadio);
-// modeArea.appendChild(compressModeLabel);
-// modeArea.appendChild(document.createElement('br'));
 modeArea.appendChild(codeModeRadio);
 modeArea.appendChild(codeModeLabel);
 modeArea.appendChild(document.createElement('br'));
@@ -777,8 +767,8 @@ trashBar1.style.background = '#00beef';
 trashBar1.style.marginTop = '5px';
 trashBar1.style.marginBottom = '5px';
 
-trashBar2 = trashBar1.cloneNode();
-trashBar3 = trashBar1.cloneNode();
+const trashBar2 = trashBar1.cloneNode();
+const trashBar3 = trashBar1.cloneNode();
 
 trashCan.appendChild(trashBar1);
 trashCan.appendChild(trashBar2);
