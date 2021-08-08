@@ -495,7 +495,7 @@ const join_String = [j, o, i, n].join('+');
 function convertText(value) {
 
     const noncomp = convertTextNonCompressed(value);
-    if (noncomp.length < 15000) {
+    if (noncomp.length < 9500) {
         return noncomp;
     }
     const comp = convertTextCompressed(value);
@@ -518,37 +518,24 @@ function convertTextNonCompressed(value) {
 }
 
 // TODO: reduce cost? not sure how yet
-const decompressFunctionCode = convertCode(`return f=>f[1]-1?f["toUpperCase"]()[0]:f[0]`);
-const matchTwo = convertCode(`return /.{2}/g`);
-
+const decompressFunctionCode = convertCode(`return f=>String["fromCodePoint"](f)`);
 
 function compressionFunction(x) {
-    const lowercase = x.toLowerCase();
-    const lowerCaseNotWorth = garboMap.get(x.toUpperCase()).length - garboMap.get(x).length < 0;
-
-    if (lowerCaseNotWorth) {
-        return x + '1';
-    }
-
-    const suffix = x === lowercase ? '1' : '0'
-    return lowercase + suffix;
+    return x.codePointAt(0);
 }
 
+// const matchTwo = convertCode(`return /.{2}/g`);
 
 function convertTextCompressed(value) {
     if (!value.length) {
         return '';
     }
     const valArray = [...value]; // convert to array of characters
-
-
     const nValArray = valArray.map(compressionFunction); // convert lowercase
-
     // no need to recurse here since compressing lowercase and numbers is effectively worthless.
-    const garbo = convertTextNonCompressed(nValArray.join(''));
-
+    const garbo = convertTextNonCompressed(nValArray.join('f'));
     const compressed = `(${garbo})`
-        + `[${match_String}](${matchTwo})`
+        + `[${split_String}](${f})` // convert back to array
         + `[${map_String}](${decompressFunctionCode})` //convert back to proper casing
         + `[${join_String}](${empty_String})`; //join back to make string
     return compressed;
