@@ -226,7 +226,11 @@ const J = `${dHJ1ZQequal_String}[${val(2)}]`;
 // "ZmFsc2U="
 const ZmFsc2Uequal_String = `${btoaFunction}(${FALSE})`;
 const Z = `${ZmFsc2Uequal_String}[${val(0)}]`;
-const U = `${ZmFsc2Uequal_String}[${val(6)}]`;
+
+// "trueZmFsc2U="
+const true_ZmFsc2Uequal_String = [TRUE, ZmFsc2Uequal_String].join('+'); // add true to reduce cost of index
+const U = `(${true_ZmFsc2Uequal_String})[${val(10)}]`;
+
 
 // "dW5kZWZpbmVk"
 const dW5kZWZpbmVk_String = `${btoaFunction}(${UNDEFINED})`
@@ -260,12 +264,11 @@ const dHJ1ZXRydWUequal_String = `${btoaFunction}(${truetrue_String})`;
 const true_dHJ1ZXRydWUequal_String = [TRUE, dHJ1ZXRydWUequal_String].join('+'); // add true to reduce cost of index
 const R = `(${true_dHJ1ZXRydWUequal_String})[${val(10)}]`;
 
-// "MQ=="
-const MQequals_String = `${btoaFunction}(${val(1)})`;
-const M = `${MQequals_String}[${val(0)}]`;
+// "MA=="
+const MAequals_String = `${btoaFunction}(${val(0)})`;
+const M = `${MAequals_String}[${val(0)}]`;
 
 // "1true"
-// can't use TRUE in since it would evaluate to 2 instead of "1true"
 const _1true_String = `${val(1)}+[]+${TRUE}`;
 // "MXQ="
 const MXQequal_String = `${btoaFunction}(${_1true_String})`;
@@ -314,14 +317,9 @@ const YQequals_String = `${btoaFunction}(${a})`;
 const Y = `${YQequals_String}[${val(0)}]`;
 const Q = `${YQequals_String}[${val(1)}]`;
 
-// "document"
-const document_String = [d, o, c, u, m, e, n, t].join('+');
-// "return document"
-const returnDocument_String = `(${return_String}+${_space}+${document_String})`;
-const documentObject = `(${functionMaker(returnDocument_String)})`;
-// "[object HTMLDocument]"
-const documentObject_String = `(${documentObject}+[])`;
-const L = `${documentObject_String}[${val(11)}]`;
+// "LA=="
+const LAequals_String = `${btoaFunction}(${_comma})`;
+const L = `${LAequals_String}[${val(0)}]`;
 
 // "t0"
 const t0_String = [t, safeValue(0)].join('+');
@@ -488,7 +486,7 @@ const fromCodePointFunction = `([]+[])[${constructor_String}][${fromCodePoint_St
 // "split"
 const split_String = [s, p, l, i, t].join('+');
 // "reduce"
-const reduce_String = [r,e,d,u,c,e].join('+');
+const reduce_String = [r, e, d, u, c, e].join('+');
 
 // =================================================
 
@@ -513,7 +511,7 @@ function convertTextNonCompressed(value) {
 
 const decompressFunctionCode = convertCode(`return(t,f)=>t+String.fromCodePoint(f)`, false);
 const decompressionOverhead = `[${split_String}](${f})` // convert back to array
-        + `[${reduce_String}](${decompressFunctionCode})` //convert back to proper characters and join to string
+    + `[${reduce_String}](${decompressFunctionCode})`; //convert back to proper characters and join to string
 
 function compressionFunction(x) {
     return x.codePointAt(0);
@@ -526,9 +524,8 @@ function convertTextCompressed(value) {
     }
     const valArray = [...value]; // convert to array of characters
     const nValArray = valArray.map(compressionFunction); // convert to numbers
-    const garbo = convertTextNonCompressed('f'+nValArray.join('f')); //join with cheap f's
+    const garbo = convertTextNonCompressed('f' + nValArray.join('f')); //join with cheap f's instead of using toString's commas.
     const compressed = `(${garbo})` + decompressionOverhead;
-
     return compressed;
 }
 
@@ -555,76 +552,71 @@ function convertFile(dataUrl) {
 
 
 // diagonstics ======================================================================================
-function tests() {
-    const testString1 = 'abcdefghijklmnopqrstuvwxyz';
-    const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const testString3 = '1234567890';
-    const testString4 = ` (){}[]<>/=".',#?:&-*`;
 
-    const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
-    const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
-    const test3 = eval(convertTextNonCompressed(testString3)) === testString3;
-    const test4 = eval(convertTextNonCompressed(testString4)) === testString4;
-    const test5 = eval(convertTextNonCompressed('@')) === '@';
-    const test1b = eval(convertTextCompressed(testString1)) === testString1;
-    const test2b = eval(convertTextCompressed(testString2)) === testString2;
-    const test3b = eval(convertTextCompressed(testString3)) === testString3;
-    const test4b = eval(convertTextCompressed(testString4)) === testString4;
-    const test5b = eval(convertTextCompressed('@')) === '@';
-    const testAll = test1 && test2 && test3 && test4 && test5
-        && test1b && test2b && test3b && test4b && test5b;
+const testString1 = 'abcdefghijklmnopqrstuvwxyz';
+const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const testString3 = '1234567890';
+const testString4 = ` (){}[]<>/=".',#?:&-*`;
 
-    console.log('tests pass: ', testAll);
-    if (!testAll) {
-        console.log('test1', test1);
-        console.log('test2', test2);
-        console.log('test3', test3);
-        console.log('test4', test4);
-        console.log('test5', test5);
-        console.log('test1b', test1b);
-        console.log('test2b', test2b);
-        console.log('test3b', test3b);
-        console.log('test4b', test4b);
-        console.log('test5b', test5b);
-    }
+const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
+const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
+const test3 = eval(convertTextNonCompressed(testString3)) === testString3;
+const test4 = eval(convertTextNonCompressed(testString4)) === testString4;
+const test5 = eval(convertTextNonCompressed('@')) === '@';
+const test1b = eval(convertTextCompressed(testString1)) === testString1;
+const test2b = eval(convertTextCompressed(testString2)) === testString2;
+const test3b = eval(convertTextCompressed(testString3)) === testString3;
+const test4b = eval(convertTextCompressed(testString4)) === testString4;
+const test5b = eval(convertTextCompressed('@')) === '@';
+const testAll = test1 && test2 && test3 && test4 && test5
+    && test1b && test2b && test3b && test4b && test5b;
+
+console.log('tests pass: ', testAll);
+if (!testAll) {
+    console.log('test1', test1);
+    console.log('test2', test2);
+    console.log('test3', test3);
+    console.log('test4', test4);
+    console.log('test5', test5);
+    console.log('test1b', test1b);
+    console.log('test2b', test2b);
+    console.log('test3b', test3b);
+    console.log('test4b', test4b);
+    console.log('test5b', test5b);
 }
 
-function diagnostics() {
-    const sizeMap = new Map();
-    garboMap.forEach((v, k) => sizeMap.set(k, v.length));
-    sizeMap.set('@', convertText('@').length);
+const sizeMap = new Map();
+garboMap.forEach((v, k) => sizeMap.set(k, v.length));
+sizeMap.set('@', convertText('@').length);
 
-    const compressionMap = new Map();
-    sizeMap.forEach((v, k) => {
-        numberValue = k.codePointAt(0).toString();
-        garboValue = convertTextNonCompressed(numberValue);
-        compressionMap.set(k, garboValue.length);
-    });
+const compressionMap = new Map();
+sizeMap.forEach((v, k) => {
+    numberValue = k.codePointAt(0).toString();
+    garboValue = convertTextNonCompressed(numberValue);
+    compressionMap.set(k, garboValue.length);
+});
 
-    const savingsMap = new Map();
-    sizeMap.forEach((v, k) => {
-        numberValue = k.codePointAt(0).toString();
-        garboValue = convertTextNonCompressed(numberValue);
-        savingsMap.set(k, garboValue.length - v);
-    });
+const savingsMap = new Map();
+sizeMap.forEach((v, k) => {
+    numberValue = k.codePointAt(0).toString();
+    garboValue = convertTextNonCompressed(numberValue);
+    savingsMap.set(k, garboValue.length - v);
+});
 
 
-    // statistics
-    console.log(Array.from(sizeMap.entries()));
-    // console.log(Array.from(savingsMap.entries()));
+// statistics
+console.log(Array.from(sizeMap.entries()));
+// console.log(Array.from(savingsMap.entries()));
 
-    const statText1 = `open('https://youtu.be/dQw4w9WgXcQ')`;
-    const stat1 = convertCode(statText1);
-    console.log('nggyu', stat1.length, stat1.length / 1024 + 'kb');
+const statText1 = `open('https://youtu.be/dQw4w9WgXcQ')`;
+const stat1 = convertCode(statText1);
+console.log('nggyu', stat1.length, stat1.length / 1024 + 'kb');
 
-    console.log('approximate compression/decompression overhead:', decompressionOverhead.length, "+ ~" + f.length + " per character");
+console.log('approximate compression/decompression overhead:', decompressionOverhead.length, "+ ~" + f.length + " per character");
 
-    const stat2 = convertCode('');
-    console.log('approximate code overhead', stat2.length);
-}
+const stat2 = convertCode('');
+console.log('approximate code overhead', stat2.length);
 
-tests();
-diagnostics();
 
 
 // ==================================================================================================
