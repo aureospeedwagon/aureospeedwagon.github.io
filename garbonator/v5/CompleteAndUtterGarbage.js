@@ -115,8 +115,14 @@ const A = `(${NaN_ArrayConstructor_String})[${val(12)}]`;
 
 // "function Number() { [native code] }"
 const numberConstructor_String = `((+[])[${constructor_String}]+[])`;
-const b = `${numberConstructor_String}[${val(12)}]`;
 const m = `${numberConstructor_String}[${val(11)}]`;
+
+// "1e100"
+const googolString = [safeValue(1), e, safeValue(1), safeValue(0), safeValue(0)].join('+');
+// "1e+100"
+const googolNumberString = `((+[])[${constructor_String}](${googolString})+[])`;
+const _plus = `${googolNumberString}[${val(2)}]`;
+
 
 // "function Boolean() { [native code] }"
 const booleanConstructor_String = `((![])[${constructor_String}]+[])`;
@@ -144,6 +150,7 @@ const _newLine = `${anonymousFunction_String}[${val(23)}]`;
 const entries_String = [e, n, t, r, i, e, s].join('+');
 // "[object Array Iterator]"
 const objectArrayIterator_String = `([][${entries_String}]()+[])`;
+const b = `${objectArrayIterator_String}[${val(2)}]`;
 const j = `${objectArrayIterator_String}[${val(3)}]`;
 const I = `${objectArrayIterator_String}[${val(14)}]`;
 
@@ -161,7 +168,7 @@ const _comma = `([[]][${concat_String}]([[]])+[])`;
 
 // "return"
 const return_String = [r, e, t, u, r, n].join('+');
-const functionMaker = (func) => `([])[${at_String}][${constructor_String}](${func})()`;
+const functionMaker = (func) => `[][${at_String}][${constructor_String}](${func})()`;
 
 // --------------------------
 
@@ -206,6 +213,11 @@ const btoaFunction = `(${functionMaker(returnBtoa_String)})`;
 
 // --------------------------
 
+// "PA=="
+// const PAqualsString = `${btoaFunction}(${_lessthan})`;
+// const P2 = `(${PAqualsString}[${val(0)}])`;
+
+
 // "dHJ1ZQ=="
 const dHJ1ZQequal_String = `${btoaFunction}(${TRUE})`;
 const H = `${dHJ1ZQequal_String}[${val(1)}]`;
@@ -222,7 +234,7 @@ const k = `${dW5kZWZpbmVk_String}[${val(3)}]`;
 const V = `${dW5kZWZpbmVk_String}[${val(10)}]`;
 
 
-// TODO: If can find k cheaper. Need to reduce cost of k (or others) by about 95
+// TODO: maybe if can find k cheaper. Need to reduce cost of k (or others) by about 95
 // // "link"
 // const link_String = [l, i, n, k].join('+');
 // // "<a href=\"undefined\"></a>"
@@ -347,18 +359,6 @@ const fia_String = [f, i, a].join('+');
 const tildeAmpersand_String = `${atobFunction}(${fia_String})`;
 const _ampersand = `${tildeAmpersand_String}[${val(1)}]`;
 
-// "fi0"
-const fi0_String = [f, i, safeValue(0)].join('+');
-// "~-"
-const tildeMinus_String = `${atobFunction}(${fi0_String})`;
-const _minus = `${tildeMinus_String}[${val(1)}]`;
-
-// "fit"
-const fit_String = [f, i, t].join('+');
-// "~+"
-const tildePlus_String = `${atobFunction}(${fit_String})`;
-const _plus = `${tildePlus_String}[${val(1)}]`;
-
 // "fir"
 const fir_String = [f, i, r].join('+');
 // "~*"
@@ -373,6 +373,15 @@ const returnHalf_String = `${return_String}+${_space}+${half_String}`;
 const zeroPointFive = `${functionMaker(returnHalf_String)}`;
 const zeroPointFive_String = `(${zeroPointFive}+[])`;
 const _period = `${zeroPointFive_String}[${val(1)}]`;
+
+// "true/1e10" (equivalent to "1e-10")
+const tenBillionth_String = [TRUE, _forwardSlash, safeValue(1), e, safeValue(10)].join('+');
+// "return true/1e10"
+const returnTenBillionth_String = `${return_String}+${_space}+${tenBillionth_String}`;
+const tenBillionth = `${functionMaker(returnTenBillionth_String)}`;
+// "1e-10"
+const oneEMinus10_String = `(${tenBillionth}+[])`;
+const _minus = `${oneEMinus10_String}[${val(2)}]`;
 
 //===========================================================
 
@@ -478,35 +487,20 @@ const fromCodePointFunction = `([]+[])[${constructor_String}][${fromCodePoint_St
 
 // "split"
 const split_String = [s, p, l, i, t].join('+');
-// "map"
-const map_String = [m, a, p].join('+');
-// "match"
-const match_String = [m, a, t, c, h].join('+');
-// "join"
-const join_String = [j, o, i, n].join('+');
-
-
-// =================================================
-
-
+// "reduce"
+const reduce_String = [r,e,d,u,c,e].join('+');
 
 // =================================================
 
 function convertText(value) {
 
     const noncomp = convertTextNonCompressed(value);
-    if (noncomp.length < 9500) {
-        return noncomp;
-    }
     const comp = convertTextCompressed(value);
-    // console.log('noncomp', noncomp.length);
-    // console.log('comp', comp.length);
 
     if (comp.length < noncomp.length) {
-        console.log('return comp', 100 - Math.floor(100 * (comp.length / noncomp.length)));
+        console.log('~', 100 - Math.floor(100 * (comp.length / noncomp.length)) + '% compression');
         return comp;
     } else {
-        // console.log('return noncomp');
         return noncomp;
     }
 }
@@ -517,27 +511,24 @@ function convertTextNonCompressed(value) {
         .join`+`;
 }
 
-// TODO: reduce cost? not sure how yet
-const decompressFunctionCode = convertCode(`return f=>String["fromCodePoint"](f)`);
+const decompressFunctionCode = convertCode(`return(t,f)=>t+String.fromCodePoint(f)`, false);
+const decompressionOverhead = `[${split_String}](${f})` // convert back to array
+        + `[${reduce_String}](${decompressFunctionCode})` //convert back to proper characters and join to string
 
 function compressionFunction(x) {
     return x.codePointAt(0);
 }
 
-// const matchTwo = convertCode(`return /.{2}/g`);
 
 function convertTextCompressed(value) {
     if (!value.length) {
         return '';
     }
     const valArray = [...value]; // convert to array of characters
-    const nValArray = valArray.map(compressionFunction); // convert lowercase
-    // no need to recurse here since compressing lowercase and numbers is effectively worthless.
-    const garbo = convertTextNonCompressed(nValArray.join('f'));
-    const compressed = `(${garbo})`
-        + `[${split_String}](${f})` // convert back to array
-        + `[${map_String}](${decompressFunctionCode})` //convert back to proper casing
-        + `[${join_String}](${empty_String})`; //join back to make string
+    const nValArray = valArray.map(compressionFunction); // convert to numbers
+    const garbo = convertTextNonCompressed('f'+nValArray.join('f')); //join with cheap f's
+    const compressed = `(${garbo})` + decompressionOverhead;
+
     return compressed;
 }
 
@@ -548,7 +539,10 @@ function getCodePoint(x) {
     return `${fromCodePointFunction}(${convertedPoint_String})`;
 }
 
-function convertCode(text) {
+function convertCode(text, allowCompression = true) {
+    if (allowCompression) {
+        return functionMaker(convertText(`${text}`))
+    }
     return functionMaker(convertTextNonCompressed(`${text}`))
 }
 
@@ -561,32 +555,77 @@ function convertFile(dataUrl) {
 
 
 // diagonstics ======================================================================================
-const sizeMap = new Map();
-garboMap.forEach((v, k) => sizeMap.set(k, v.length));
-sizeMap.set('@', convertText('@').length);
+function tests() {
+    const testString1 = 'abcdefghijklmnopqrstuvwxyz';
+    const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const testString3 = '1234567890';
+    const testString4 = ` (){}[]<>/=".',#?:&-*`;
 
-const testString1 = 'abcdefghijklmnopqrstuvwxyz';
-const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const testString3 = '1234567890';
-const testString4 = ` (){}[]<>/=".',#?:&-*`;
+    const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
+    const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
+    const test3 = eval(convertTextNonCompressed(testString3)) === testString3;
+    const test4 = eval(convertTextNonCompressed(testString4)) === testString4;
+    const test5 = eval(convertTextNonCompressed('@')) === '@';
+    const test1b = eval(convertTextCompressed(testString1)) === testString1;
+    const test2b = eval(convertTextCompressed(testString2)) === testString2;
+    const test3b = eval(convertTextCompressed(testString3)) === testString3;
+    const test4b = eval(convertTextCompressed(testString4)) === testString4;
+    const test5b = eval(convertTextCompressed('@')) === '@';
+    const testAll = test1 && test2 && test3 && test4 && test5
+        && test1b && test2b && test3b && test4b && test5b;
 
-const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
-const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
-const test3 = eval(convertTextNonCompressed(testString3)) === testString3;
-const test4 = eval(convertTextNonCompressed(testString4)) === testString4;
-const test5 = eval(convertTextNonCompressed('@')) === '@';
-const test1b = eval(convertTextCompressed(testString1)) === testString1;
-const test2b = eval(convertTextCompressed(testString2)) === testString2;
-const test3b = eval(convertTextCompressed(testString3)) === testString3;
-const test4b = eval(convertTextCompressed(testString4)) === testString4;
-const test5b = eval(convertTextCompressed('@')) === '@';
-const testAll = test1 && test2 && test3 && test4 && test5
-    && test1b && test2b && test3b && test4b && test5b;
+    console.log('tests pass: ', testAll);
+    if (!testAll) {
+        console.log('test1', test1);
+        console.log('test2', test2);
+        console.log('test3', test3);
+        console.log('test4', test4);
+        console.log('test5', test5);
+        console.log('test1b', test1b);
+        console.log('test2b', test2b);
+        console.log('test3b', test3b);
+        console.log('test4b', test4b);
+        console.log('test5b', test5b);
+    }
+}
 
-// console.log(sizeMap);
-console.log(Array.from(sizeMap.entries()));
-// console.log(Array.from(sizeMap.entries()).sort((a,b)=> a[1]-b[1]));
-console.log('tests pass: ', testAll);
+function diagnostics() {
+    const sizeMap = new Map();
+    garboMap.forEach((v, k) => sizeMap.set(k, v.length));
+    sizeMap.set('@', convertText('@').length);
+
+    const compressionMap = new Map();
+    sizeMap.forEach((v, k) => {
+        numberValue = k.codePointAt(0).toString();
+        garboValue = convertTextNonCompressed(numberValue);
+        compressionMap.set(k, garboValue.length);
+    });
+
+    const savingsMap = new Map();
+    sizeMap.forEach((v, k) => {
+        numberValue = k.codePointAt(0).toString();
+        garboValue = convertTextNonCompressed(numberValue);
+        savingsMap.set(k, garboValue.length - v);
+    });
+
+
+    // statistics
+    console.log(Array.from(sizeMap.entries()));
+    // console.log(Array.from(savingsMap.entries()));
+
+    const statText1 = `open('https://youtu.be/dQw4w9WgXcQ')`;
+    const stat1 = convertCode(statText1);
+    console.log('nggyu', stat1.length, stat1.length / 1024 + 'kb');
+
+    console.log('approximate compression/decompression overhead:', decompressionOverhead.length, "+ ~" + f.length + " per character");
+
+    const stat2 = convertCode('');
+    console.log('approximate code overhead', stat2.length);
+}
+
+tests();
+diagnostics();
+
 
 // ==================================================================================================
 
