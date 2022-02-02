@@ -548,9 +548,7 @@ function convertCode(text, allowCompression = true) {
 
 // TODO: make simpler?
 function convertFile(dataUrl) {
-    const fileFunction = `const f = window.open();f.document.body.innerHTML = '<iframe src="${dataUrl}" style="border:none "width="100vw" height="100vh"></iframe>';`;
-    const converted = convertText(fileFunction);
-    return functionMaker(converted);
+    return convertText(dataUrl);
 }
 
 
@@ -613,7 +611,9 @@ console.log(Array.from(sizeMap.entries()));
 
 const statText1 = `open('https://youtu.be/dQw4w9WgXcQ')`;
 const stat1 = convertCode(statText1);
-console.log('nggyu', stat1.length, stat1.length / 1024 + 'kb');
+const stat1b = convertCode(statText1, false);
+console.log('nggyu-C', stat1.length, stat1.length / 1024 + 'kb');
+console.log('nggyu-NC', stat1b.length, stat1b.length / 1024 + 'kb');
 
 console.log('approximate compression/decompression overhead:', decompressionOverhead.length, "+ ~" + f.length + " per character");
 
