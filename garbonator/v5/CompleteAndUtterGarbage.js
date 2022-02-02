@@ -509,7 +509,10 @@ function convertTextNonCompressed(value) {
         .join`+`;
 }
 
-const decompressFunctionCode = convertCode(`return(t,f)=>t+String.fromCodePoint(f)`, false);
+const mappingReducer = convertTextNonCompressed('return a=>(t,f)=>t+a(f)');
+const reducerFunctionMaker = (mappingFunction) => `[][${at_String}][${constructor_String}](${mappingReducer})()(${mappingFunction})`;
+
+const decompressFunctionCode = reducerFunctionMaker(fromCodePointFunction)
 const decompressionOverhead = `[${split_String}](${f})` // convert back to array
     + `[${reduce_String}](${decompressFunctionCode})`; //convert back to proper characters and join to string
 
