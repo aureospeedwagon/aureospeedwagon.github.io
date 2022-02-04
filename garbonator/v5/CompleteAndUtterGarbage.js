@@ -510,7 +510,7 @@ function convertTextNonCompressed(value) {
 }
 
 const mappingReducer = convertTextNonCompressed('return a=>(t,f)=>t+a(f)');
-const reducerFunctionMaker = (mappingFunction) => `[][${at_String}][${constructor_String}](${mappingReducer})()(${mappingFunction})`;
+const reducerFunctionMaker = (mappingFunction) => `${functionMaker(mappingReducer)}(${mappingFunction})`;
 
 const decompressFunctionCode = reducerFunctionMaker(fromCodePointFunction)
 const decompressionOverhead = `[${split_String}](${f})` // convert back to array
@@ -609,7 +609,7 @@ sizeMap.forEach((v, k) => {
 console.log(Array.from(sizeMap.entries()));
 // console.log(Array.from(savingsMap.entries()));
 
-const statText1 = `open('https://youtu.be/dQw4w9WgXcQ')`;
+const statText1 = `open("https://youtu.be/dQw4w9WgXcQ")`;
 const stat1 = convertCode(statText1);
 const stat1b = convertCode(statText1, false);
 console.log('nggyu-C', stat1.length, stat1.length / 1024 + 'kb');
