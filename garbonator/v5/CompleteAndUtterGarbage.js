@@ -177,8 +177,8 @@ const returnSelf_String = `(${return_String}+${_space}+${self_String})`;
 const selfFunction = `${functionMaker(returnSelf_String)}`;
 
 // "[object Window]"
-const windowObjectString = `${selfFunction}+[]`;
-const w = `(${windowObjectString})[${val(13)}]`;
+const windowObjectString = `(${selfFunction}+[])`;
+const w = `${windowObjectString}[${val(13)}]`;
 const NaN_windowObjectString = `(${NAN}+${selfFunction})`;
 const W = `${NaN_windowObjectString}[${val(11)}]`;
 
@@ -192,8 +192,8 @@ const returnStatusbar_String = `(${return_String}+${_space}+${statusbar_String})
 const statusbarFunction = `${functionMaker(returnStatusbar_String)}`;
 
 // "[object BarProp]"
-const barpropObjectString = `${statusbarFunction}+[]`;
-const P = `(${barpropObjectString})[${val(11)}]`;
+const barpropObjectString = `(${statusbarFunction}+[])`;
+const P = `${barpropObjectString}[${val(11)}]`;
 
 // --------------------------
 
@@ -201,13 +201,13 @@ const P = `(${barpropObjectString})[${val(11)}]`;
 const atob_String = [a, t, o, b].join('+');
 // "return atob"
 const returnAtob_String = `(${return_String}+${_space}+${atob_String})`;
-const atobFunction = `(${functionMaker(returnAtob_String)})`;
+const atobFunction = `${functionMaker(returnAtob_String)}`;
 
 // "btoa"
 const btoa_String = [b, t, o, a].join('+');
 // "return btoa"
 const returnBtoa_String = `(${return_String}+${_space}+${btoa_String})`;
-const btoaFunction = `(${functionMaker(returnBtoa_String)})`;
+const btoaFunction = `${functionMaker(returnBtoa_String)}`;
 
 // --------------------------
 
@@ -259,8 +259,8 @@ const h = `${hOStuff_String}[${val(0)}]`;
 const truetrue_String = `${TRUE}+[]+${TRUE}`;
 // "dHJ1ZXRydWU="
 const dHJ1ZXRydWUequal_String = `${btoaFunction}(${truetrue_String})`;
-const true_dHJ1ZXRydWUequal_String = [TRUE, dHJ1ZXRydWUequal_String].join('+'); // add true to reduce cost of index
-const R = `(${true_dHJ1ZXRydWUequal_String})[${val(10)}]`;
+const true_dHJ1ZXRydWUequal_String = `(${TRUE}+${dHJ1ZXRydWUequal_String})`; // add true to reduce cost of index
+const R = `${true_dHJ1ZXRydWUequal_String}[${val(10)}]`;
 
 // "MA=="
 const MAequals_String = `${btoaFunction}(${val(0)})`;
