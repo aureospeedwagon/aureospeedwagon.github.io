@@ -55,7 +55,7 @@ const N = `${NaN_String}[${val(0)}]`;
 
 // "falseundefined", cheaper to get the 10th rather than the 5th
 const falseUndefined_String = `(${FALSE}+[]+${UNDEFINED})`;
-const i = `(${falseUndefined_String})[${val(10)}]`;
+const i = `${falseUndefined_String}[${val(10)}]`;
 
 // "at"
 const at_String = [a, t].join('+');
@@ -71,14 +71,14 @@ const _closeCurly = `${atFunction_String}[${val(30)}]`;
 // by adding true to the start, we can make a net gain by reducing the cost of the index
 // "truefunction at() { [native code] }"
 const true_AtFunction_String = `(${TRUE}+[][${at_String}])`;
-const o = `(${true_AtFunction_String})[${val(10)}]`;
-const _openSquare = `(${true_AtFunction_String})[${val(20)}]`;
+const o = `${true_AtFunction_String}[${val(10)}]`;
+const _openSquare = `${true_AtFunction_String}[${val(20)}]`;
 
 // by adding NaN to the start, we can make a net gain by reducing the cost of the index
 // "NaNfunction at() { [native code] }"
 const nan_AtFunction_String = `(${NAN}+[][${at_String}])`;
-const _space = `(${nan_AtFunction_String})[${val(11)}]`;
-const _closeSquare = `(${nan_AtFunction_String})[${val(31)}]`;
+const _space = `${nan_AtFunction_String}[${val(11)}]`;
+const _closeSquare = `${nan_AtFunction_String}[${val(31)}]`;
 
 
 // "italics"
@@ -104,14 +104,14 @@ const stringConstructor_String = `(${empty_String}[${constructor_String}]+[])`;
 const g = `${stringConstructor_String}[${val(14)}]`;
 // "NaNfunction String() { [native code] }"
 const NaN_StringConstructor_String = `(${NAN}+${empty_String}[${constructor_String}])`
-const S = `(${NaN_StringConstructor_String})[${val(12)}]`;
+const S = `${NaN_StringConstructor_String}[${val(12)}]`;
 
 // "function Array() { [native code] }"
 const arrayConstructor_String = `([][${constructor_String}]+[])`;
 const y = `${arrayConstructor_String}[${val(13)}]`;
 // "NaNfunction Array() { [native code] }"
 const NaN_ArrayConstructor_String = `(${NAN}+[][${constructor_String}])`;
-const A = `(${NaN_ArrayConstructor_String})[${val(12)}]`;
+const A = `${NaN_ArrayConstructor_String}[${val(12)}]`;
 
 // "function Number() { [native code] }"
 const numberConstructor_String = `((+[])[${constructor_String}]+[])`;
@@ -128,13 +128,13 @@ const _plus = `${googolNumberString}[${val(2)}]`;
 const booleanConstructor_String = `((![])[${constructor_String}]+[])`;
 // "NaNfunction Boolean() { [native code] }"
 const NaN_BooleanConstructor_String = `(${NAN}+(![])[${constructor_String}])`;
-const B = `(${NaN_BooleanConstructor_String})[${val(12)}]`;
+const B = `${NaN_BooleanConstructor_String}[${val(12)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructor_String = `([][${at_String}][${constructor_String}]+[])`;
 // "NaNfunction Function() { [native code] }"
 const NaN_FunctionConstructor_String = `(${NAN}+[][${at_String}][${constructor_String}])`;
-const F = `(${NaN_FunctionConstructor_String})[${val(12)}]`;
+const F = `${NaN_FunctionConstructor_String}[${val(12)}]`;
 
 
 // `ffunction anonymous(
@@ -157,7 +157,7 @@ const object = `([][${entries_String}]()[${constructor_String}]())`;
 const objectConstructor_String = `([][${entries_String}]()[${constructor_String}]+[])`;
 // "NaNfunction Object() { [native code] }"
 const NaN_ObjectConstructor_String = `(${NAN}+[][${entries_String}]()[${constructor_String}])`;
-const O = `(${NaN_ObjectConstructor_String})[${val(12)}]`;
+const O = `${NaN_ObjectConstructor_String}[${val(12)}]`;
 
 // "concat"
 const concat_String = [c, o, n, c, a, t].join('+');
@@ -179,8 +179,8 @@ const selfFunction = `${functionMaker(returnSelf_String)}`;
 // "[object Window]"
 const windowObjectString = `${selfFunction}+[]`;
 const w = `(${windowObjectString})[${val(13)}]`;
-const NaN_windowObjectString = `${NAN}+${selfFunction}`;
-const W = `(${NaN_windowObjectString})[${val(11)}]`;
+const NaN_windowObjectString = `(${NAN}+${selfFunction})`;
+const W = `${NaN_windowObjectString}[${val(11)}]`;
 
 
 // --------------------------
