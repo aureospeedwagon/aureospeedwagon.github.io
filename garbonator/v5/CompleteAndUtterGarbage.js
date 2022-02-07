@@ -70,13 +70,13 @@ const _closeCurly = `${atFunction_String}[${val(30)}]`;
 
 // by adding true to the start, we can make a net gain by reducing the cost of the index
 // "truefunction at() { [native code] }"
-const true_AtFunction_String = [TRUE, atFunction_String].join('+')
+const true_AtFunction_String = `(${TRUE}+[][${at_String}])`;
 const o = `(${true_AtFunction_String})[${val(10)}]`;
 const _openSquare = `(${true_AtFunction_String})[${val(20)}]`;
 
 // by adding NaN to the start, we can make a net gain by reducing the cost of the index
 // "NaNfunction at() { [native code] }"
-const nan_AtFunction_String = [NAN, atFunction_String].join('+')
+const nan_AtFunction_String = `(${NAN}+[][${at_String}])`;
 const _space = `(${nan_AtFunction_String})[${val(11)}]`;
 const _closeSquare = `(${nan_AtFunction_String})[${val(31)}]`;
 
@@ -103,14 +103,14 @@ const constructor_String = [c, o, n, s, t, r, u, c, t, o, r].join('+');
 const stringConstructor_String = `(${empty_String}[${constructor_String}]+[])`;
 const g = `${stringConstructor_String}[${val(14)}]`;
 // "NaNfunction String() { [native code] }"
-const NaN_StringConstructor_String = [NAN, stringConstructor_String].join('+');
+const NaN_StringConstructor_String = `(${NAN}+${empty_String}[${constructor_String}])`
 const S = `(${NaN_StringConstructor_String})[${val(12)}]`;
 
 // "function Array() { [native code] }"
 const arrayConstructor_String = `([][${constructor_String}]+[])`;
 const y = `${arrayConstructor_String}[${val(13)}]`;
 // "NaNfunction Array() { [native code] }"
-const NaN_ArrayConstructor_String = [NAN, arrayConstructor_String].join('+');
+const NaN_ArrayConstructor_String = `(${NAN}+[][${constructor_String}])`;
 const A = `(${NaN_ArrayConstructor_String})[${val(12)}]`;
 
 // "function Number() { [native code] }"
@@ -127,25 +127,23 @@ const _plus = `${googolNumberString}[${val(2)}]`;
 // "function Boolean() { [native code] }"
 const booleanConstructor_String = `((![])[${constructor_String}]+[])`;
 // "NaNfunction Boolean() { [native code] }"
-const NaN_BooleanConstructor_String = [NAN, booleanConstructor_String].join('+');
+const NaN_BooleanConstructor_String = `(${NAN}+(![])[${constructor_String}])`;
 const B = `(${NaN_BooleanConstructor_String})[${val(12)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructor_String = `([][${at_String}][${constructor_String}]+[])`;
 // "NaNfunction Function() { [native code] }"
-const NaN_FunctionConstructor_String = [NAN, functionConstructor_String].join('+');
+const NaN_FunctionConstructor_String = `(${NAN}+[][${at_String}][${constructor_String}])`;
 const F = `(${NaN_FunctionConstructor_String})[${val(12)}]`;
 
 
-// `function anonymous(
+// `ffunction anonymous(
 //     ) {
 //
 //     }`
-const anonymousFunction_String = `(([])[${at_String}][${constructor_String}]()+[])`;
-// There are multiple instances of the newline character in that _string.
-// It saves several characters to take newline at 23 instead of 19 due to cheaper index
-const _newLine = `${anonymousFunction_String}[${val(23)}]`;
-
+const f_anonymousFunction_String = `(${f}+([])[${at_String}][${constructor_String}]())`;
+// barely cheaper to add f at start and get at 20 instead of taking at 19 or 23
+const _newLine = `${f_anonymousFunction_String}[${val(20)}]`;
 
 const entries_String = [e, n, t, r, i, e, s].join('+');
 // "[object Array Iterator]"
@@ -158,7 +156,7 @@ const object = `([][${entries_String}]()[${constructor_String}]())`;
 //"function Object() { [native code] }"
 const objectConstructor_String = `([][${entries_String}]()[${constructor_String}]+[])`;
 // "NaNfunction Object() { [native code] }"
-const NaN_ObjectConstructor_String = [NAN, objectConstructor_String].join('+');
+const NaN_ObjectConstructor_String = `(${NAN}+[][${entries_String}]()[${constructor_String}])`;
 const O = `(${NaN_ObjectConstructor_String})[${val(12)}]`;
 
 // "concat"
@@ -181,7 +179,7 @@ const selfFunction = `${functionMaker(returnSelf_String)}`;
 // "[object Window]"
 const windowObjectString = `${selfFunction}+[]`;
 const w = `(${windowObjectString})[${val(13)}]`;
-const NaN_windowObjectString = `${NAN}+${selfFunction}+[]`;
+const NaN_windowObjectString = `${NAN}+${selfFunction}`;
 const W = `(${NaN_windowObjectString})[${val(11)}]`;
 
 
@@ -509,27 +507,33 @@ function convertTextNonCompressed(value) {
         .join`+`;
 }
 
-const mappingReducer = convertTextNonCompressed('return a=>(t,f)=>t+a(f)');
-const reducerFunctionMaker = (mappingFunction) => `${functionMaker(mappingReducer)}(${mappingFunction})`;
 
-const decompressFunctionCode = reducerFunctionMaker(fromCodePointFunction)
-const decompressionOverhead = `[${split_String}](${f})` // convert back to array
-    + `[${reduce_String}](${decompressFunctionCode})`; //convert back to proper characters and join to string
-
-function compressionFunction(x) {
-    return x.codePointAt(0);
+function compressionFunction(value) {
+    const valArray = [...value]; // convert to array of characters
+    const nValArray = valArray.map(x=>x.codePointAt(0)); // convert to numbers
+    const garbo = convertTextNonCompressed('f' + nValArray.join('f')); //join with cheap f's instead of using toString's commas.
+    return garbo;
 }
 
+
+function decompressFunction(compressed) {
+    const mappingReducer = convertTextNonCompressed('return a=>(t,f)=>t+a(f)');
+    const reducerFunctionMaker = (mappingFunction) => `${functionMaker(mappingReducer)}(${mappingFunction})`;
+    
+    const decompressFunctionCode = reducerFunctionMaker(fromCodePointFunction)
+    const decompressionOverhead = `[${split_String}](${f})` // convert back to array
+        + `[${reduce_String}](${decompressFunctionCode})`; //convert back to proper characters and join to string
+    return `(${compressed})` + decompressionOverhead;
+}
 
 function convertTextCompressed(value) {
     if (!value.length) {
         return '';
     }
-    const valArray = [...value]; // convert to array of characters
-    const nValArray = valArray.map(compressionFunction); // convert to numbers
-    const garbo = convertTextNonCompressed('f' + nValArray.join('f')); //join with cheap f's instead of using toString's commas.
-    const compressed = `(${garbo})` + decompressionOverhead;
-    return compressed;
+
+    const compressed = compressionFunction(value);
+    const decompressable = decompressFunction(compressed);
+    return decompressable;
 }
 
 
@@ -615,7 +619,7 @@ const stat1b = convertCode(statText1, false);
 console.log('nggyu-C', stat1.length, stat1.length / 1024 + 'kb');
 console.log('nggyu-NC', stat1b.length, stat1b.length / 1024 + 'kb');
 
-console.log('approximate compression/decompression overhead:', decompressionOverhead.length, "+ ~" + f.length + " per character");
+console.log('approximate compression/decompression overhead:', " ~" + decompressFunction('').length, "+ ~" + f.length + " per character");
 
 const stat2 = convertCode('');
 console.log('approximate code overhead', stat2.length);
