@@ -17,17 +17,6 @@ function val(n) {
             .join('+');
 }
 
-const _1 = `(${val(1)}+[])`;
-const _2 = `(${val(2)}+[])`;
-const _3 = `(${val(3)}+[])`;
-const _4 = `(${val(4)}+[])`;
-const _5 = `(${val(5)}+[])`;
-const _6 = `(${val(6)}+[])`;
-const _7 = `(${val(7)}+[])`;
-const _8 = `(${val(8)}+[])`;
-const _9 = `(${val(9)}+[])`;
-const _0 = `(${val(0)}+[])`;
-
 const FALSE = '![]';
 const TRUE = '!![]';
 const UNDEFINED = '[][[]]';
