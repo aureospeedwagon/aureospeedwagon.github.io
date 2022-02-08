@@ -361,7 +361,7 @@ const zeroPointFive_String = `(${zeroPointFive}+[])`;
 const _period = `${zeroPointFive_String}[${val(1)}]`;
 
 // "true/1e10" (equivalent to "1e-10")
-const tenBillionth_String = [TRUE, _forwardSlash, safeValue(1), e, safeValue(10)].join('+');
+const tenBillionth_String = [TRUE, _forwardSlash, safeValue(1), e, safeValue(1), safeValue(0)].join('+');
 // "return true/1e10"
 const returnTenBillionth_String = `${return_String}+${_space}+${tenBillionth_String}`;
 const tenBillionth = `${functionMaker(returnTenBillionth_String)}`;
