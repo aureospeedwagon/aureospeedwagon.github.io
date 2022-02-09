@@ -95,16 +95,16 @@ const constructor_String = [c, o, n, s, t, r, u, c, t, o, r].join('+');
 // "function String() { [native code] }"
 const stringConstructor_String = `(${empty_String}[${constructor_String}]+[])`;
 const g = `${stringConstructor_String}[${val(14)}]`;
-// "NaNfunction String() { [native code] }"
-const NaN_StringConstructor_String = `(${NAN}+${empty_String}[${constructor_String}])`
-const S = `${NaN_StringConstructor_String}[${val(12)}]`;
+// "0function String() { [native code] }"
+const ZERO_StringConstructor_String = `(${val(0)}+${empty_String}[${constructor_String}])`
+const S = `${ZERO_StringConstructor_String}[${val(10)}]`;
 
 // "function Array() { [native code] }"
 const arrayConstructor_String = `([][${constructor_String}]+[])`;
 const y = `${arrayConstructor_String}[${val(13)}]`;
-// "NaNfunction Array() { [native code] }"
-const NaN_ArrayConstructor_String = `(${NAN}+[][${constructor_String}])`;
-const A = `${NaN_ArrayConstructor_String}[${val(12)}]`;
+// "0function Array() { [native code] }"
+const ZERO_ArrayConstructor_String = `(${val(0)}+[][${constructor_String}])`;
+const A = `${ZERO_ArrayConstructor_String}[${val(10)}]`;
 
 // "function Number() { [native code] }"
 const numberConstructor_String = `((+[])[${constructor_String}]+[])`;
@@ -119,15 +119,15 @@ const _plus = `${googolNumberString}[${val(2)}]`;
 
 // "function Boolean() { [native code] }"
 const booleanConstructor_String = `((![])[${constructor_String}]+[])`;
-// "NaNfunction Boolean() { [native code] }"
-const NaN_BooleanConstructor_String = `(${NAN}+(![])[${constructor_String}])`;
-const B = `${NaN_BooleanConstructor_String}[${val(12)}]`;
+// "0function Boolean() { [native code] }"
+const ZERO_BooleanConstructor_String = `(${val(0)}+(![])[${constructor_String}])`;
+const B = `${ZERO_BooleanConstructor_String}[${val(10)}]`;
 
 // "function Function() { [native code] }"
 const functionConstructor_String = `([][${at_String}][${constructor_String}]+[])`;
-// "NaNfunction Function() { [native code] }"
-const NaN_FunctionConstructor_String = `(${NAN}+[][${at_String}][${constructor_String}])`;
-const F = `${NaN_FunctionConstructor_String}[${val(12)}]`;
+// "0function Function() { [native code] }"
+const ZERO_FunctionConstructor_String = `(${val(0)}+[][${at_String}][${constructor_String}])`;
+const F = `${ZERO_FunctionConstructor_String}[${val(10)}]`;
 
 
 // `function anonymous(
@@ -147,11 +147,8 @@ const j = `${objectArrayIterator_String}[${val(3)}]`;
 const I = `${objectArrayIterator_String}[${val(14)}]`;
 
 const object = `([][${entries_String}]()[${constructor_String}]())`;
-//"function Object() { [native code] }"
-const objectConstructor_String = `([][${entries_String}]()[${constructor_String}]+[])`;
-// "NaNfunction Object() { [native code] }"
-const NaN_ObjectConstructor_String = `(${NAN}+[][${entries_String}]()[${constructor_String}])`;
-const O = `${NaN_ObjectConstructor_String}[${val(12)}]`;
+const objectObject = `(${NAN}+[][${entries_String}]()[${constructor_String}]())`;
+const O = `${objectObject}[${val(11)}]`;
 
 // "concat"
 const concat_String = [c, o, n, c, a, t].join('+');
