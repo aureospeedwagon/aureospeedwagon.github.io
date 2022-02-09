@@ -130,13 +130,14 @@ const NaN_FunctionConstructor_String = `(${NAN}+[][${at_String}][${constructor_S
 const F = `${NaN_FunctionConstructor_String}[${val(12)}]`;
 
 
-// `ffunction anonymous(
+// `function anonymous(
 //     ) {
 //
 //     }`
-const f_anonymousFunction_String = `(${f}+([])[${at_String}][${constructor_String}]())`;
-// barely cheaper to add f at start and get at 20 instead of taking at 19 or 23
-const _newLine = `${f_anonymousFunction_String}[${val(20)}]`;
+const anonymousFunction_String = `([][${at_String}][${constructor_String}]()+[])`;
+// cheaper to get at 23 instead of 19
+const _newLine = `${anonymousFunction_String}[${val(23)}]`;
+
 
 const entries_String = [e, n, t, r, i, e, s].join('+');
 // "[object Array Iterator]"
