@@ -283,8 +283,10 @@ const tOpenParen_String = [t, _openParen].join('+');
 const dCgequal_String = `${btoaFunction}(${tOpenParen_String})`;
 const C = `${dCgequal_String}[${val(1)}]`;
 
+// "01"
+const ZERO_ONE = `+[]+[]+(+!![])`
 // "MTE="
-const MTEequals_String = `${btoaFunction}(${val(11)})`;
+const MTEequals_String = `${btoaFunction}(${ZERO_ONE})`;
 const E = `${MTEequals_String}[${val(2)}]`;
 
 // "tf"
