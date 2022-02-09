@@ -7,8 +7,11 @@ function val(n) {
     if (n === 0 || n === '0') {
         return '+[]';
     }
+    if (n === 1 || n === '1') {
+        return '+!![]';
+    }
     if (n < 10) {
-        return '+!![]'.repeat(n);
+        return '!![]'+'+!![]'.repeat(n-1);
     }
 
     return '[]+'
@@ -491,7 +494,7 @@ function convertText(value) {
 }
 
 function convertTextNonCompressed(value) {
-    const prefix = '0123456789'.includes(value[0]) && '0123456789'.includes(value[1]) ? '[]+': ''
+    const prefix = '0123456789'.includes(value[0]) && '0123456789'.includes(value[1]) ? '[]+' : ''
     return prefix + [...value]
         .map(x => garboMap.get(x) || getCodePoint(x))
         .join`+`;
@@ -500,7 +503,7 @@ function convertTextNonCompressed(value) {
 
 function compressionFunction(value) {
     const valArray = [...value]; // convert to array of characters
-    const nValArray = valArray.map(x=>x.codePointAt(0)); // convert to numbers
+    const nValArray = valArray.map(x => x.codePointAt(0)); // convert to numbers
     const garbo = convertTextNonCompressed('f' + nValArray.join('f')); //join with cheap f's instead of using toString's commas.
     return garbo;
 }
