@@ -11,14 +11,22 @@ function val(n) {
         return '+!![]';
     }
     if (n < 10) {
-        return '!![]'+'+!![]'.repeat(n-1);
+        return '!![]' + '+!![]'.repeat(n - 1);
     }
 
-    return '[]+'
-        + [...n.toString()]
+    if (n >= 10) {
+        let first = [...n.toString()][0];
+        let rest = [...n.toString()]
+            .slice(1)
             .map(x => `(${val(x)})`)
-            .join('+');
+            .join('+')
+
+        return val(first)
+            + `+[]+`
+            + rest;
+    }
 }
+
 
 const FALSE = '![]';
 const TRUE = '!![]';
