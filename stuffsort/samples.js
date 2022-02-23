@@ -1,20 +1,4 @@
-pokemonList = [];
 mcuList = [];
-
-function getPokemonHttpRequest() {
-    fetch(`https://pokeapi.co/api/v2/pokemon?offset=0&limit=1500`)
-        .then(response => response.json())
-        .then(data => handlePokemonData(data))
-        .catch(x => console.log('err', x));
-}
-
-function handlePokemonData(data) {
-    pokemonList = data.results.map(p => {
-        id = p.url.split('/').at(-2);
-        return `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png"><br><span class="name-label">${p.name.toUpperCase()}</span>`;
-    });
-}
-
 
 function getMCUHttpRequest() {
 
@@ -41,6 +25,4 @@ function handleMCUData(moviesJSON, showsJSON) {
         });
 }
 
-
-getPokemonHttpRequest();
 getMCUHttpRequest();

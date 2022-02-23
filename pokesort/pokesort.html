@@ -1,44 +1,57 @@
 <head>
     <link rel="stylesheet" href="pokesort.css">
+    <link rel="stylesheet" href="pokeswap.css">
 </head>
 
 <body>
+    <div class="page">
+        <div class="left-side">
+            <div class="row">
+                <div class="column" id="option" onclick="handleMore()"></div>
+                <div class="column" id="current" onclick="handleLess()"></div>
+            </div>
 
 
-    <div class="row">
-        <div class="column" id="option" onclick="handleMore()"></div>
-        <div class="column" id="current" onclick="handleLess()"></div>
-        <div class="column" id="options">
-        
-            <span>Making changes to these settings will reset your progress.</span>
-            <br>
-            <input type="checkbox" id="alt" name="alt" onclick="reset()">
-            <label for="alt"> Include Alternative Forms</label>
-            <br>
-            <input type="checkbox" id="regional" name="regional" onclick="reset()">
-            <label for="regional"> Include Regional Variants</label>
-            <br>
-            <input type="checkbox" id="mega" name="mega" onclick="reset()">
-            <label for="mega"> Include Mega Forms</label>
-            <br>
-            <input type="checkbox" id="gmax" name="gmax" onclick="reset()">
-            <label for="gmax"> Include GMax Forms</label>
-            <br>
-            <a id='reset' onclick="reset()"> RESET</a>
         </div>
-    </div>
-    
-    <div class="instructions">
-        <span > Click the one you like more. The whole process will take some time.</span>
+        <div class="right-side">
+            <div class="instructions">
+                Click the one you like more. 
+                <br>
+                The whole process will take some time.
+            </div>
+            <div class="progress">
+                <span>
+                    Completed <span id="percent"></span>
+                </span>
+            </div>
+
+            <button onclick="pokemon()">All Pokemon</button>
+            <br>
+            <button onclick="gen(1)">Gen 1</button>
+            <button onclick="gen(2)">Gen 2</button>
+            <button onclick="gen(3)">Gen 3</button>
+            <button onclick="gen(4)">Gen 4</button>
+            <br>
+            <button onclick="gen(5)">Gen 5</button>
+            <button onclick="gen(6)">Gen 6</button>
+            <button onclick="gen(7)">Gen 7</button>
+            <button onclick="gen(8)">Gen 8</button>
+            <div>Todo: More filters</div>
+            <!-- <button onclick="start()">START</button> -->
+
+        </div>
     </div>
 
     <hr>
-    <input type="checkbox" id="result" name="result" onchange="redoResults()">
-    <label for="result"> Show Full Results</label><br>
-    <span id="percent"></span>
-    <div id="results"></div>
+    <input type="checkbox" id="result" name="result" onchange="redoResultShowAll()">
+    <label for="result"> Show Full Results</label>
+    <input type="checkbox" id="images" name="images" onchange="redoResultShowImages()">
+    <label for="images"> Show Images</label><br>
+    <div id="results" class="hide-result-images"></div>
 
 </body>
 
-<script type="text/javascript" src="pokemon.js"></script>
+<script type="text/javascript" src="name-service.js"></script>
+<script type="text/javascript" src="sprite-service.js"></script>
+<script type="text/javascript" src="pokemon-service.js"></script>
 <script type="text/javascript" src="pokesort.js"></script>

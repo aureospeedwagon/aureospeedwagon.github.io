@@ -1,0 +1,345 @@
+
+
+@keyframes img2-1 {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes img2-2 {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes img3-1 {
+  0% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+}
+@keyframes img3-2 {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+}
+@keyframes img3-3 {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+}
+
+@keyframes img4-1 {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+@keyframes img4-2 {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+@keyframes img4-3 {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+@keyframes img4-4 {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+}
+
+@keyframes img6-1 {
+  0% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 0;
+  }
+}
+@keyframes img6-2 {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 0;
+  }
+}
+@keyframes img6-3 {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 0;
+  }
+}
+@keyframes img6-4 {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 0;
+  }
+}
+@keyframes img6-5 {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  84% {
+    opacity: 0;
+  }
+}
+@keyframes img6-6 {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 1;
+  }
+}
+
+
+.alternate-forms-2 {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.alternate-forms-2 > .form1 {
+    position: absolute;
+    opacity: 1;
+    animation: img2-1 2s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-2 > .form2 {
+    position: absolute;
+    opacity: 0;
+    animation: img2-2 2s infinite; 
+    animation-timing-function: step-end;
+}
+
+.alternate-forms-3 {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.alternate-forms-3 > .form1 {
+    position: absolute;
+    opacity: 1;
+    animation: img3-1 3s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-3 > .form2 {
+    position: absolute;
+    opacity: 0;
+    animation: img3-2 3s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-3 > .form3 {
+    position: absolute;
+    opacity: 0;
+    animation: img3-3 3s infinite; 
+    animation-timing-function: step-end;
+}
+
+.alternate-forms-4 {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.alternate-forms-4 > .form1 {
+    position: absolute;
+    opacity: 1;
+    animation: img4-1 4s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-4 > .form2 {
+    position: absolute;
+    opacity: 0;
+    animation: img4-2 4s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-4 > .form3 {
+    position: absolute;
+    opacity: 0;
+    animation: img4-3 4s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-4 > .form4 {
+    position: absolute;
+    opacity: 0;
+    animation: img4-4 4s infinite; 
+    animation-timing-function: step-end;
+}
+
+.alternate-forms-6 {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.alternate-forms-6 > .form1 {
+    position: absolute;
+    opacity: 1;
+    animation: img6-1 6s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-6 > .form2 {
+    position: absolute;
+    opacity: 0;
+    animation: img6-2 6s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-6 > .form3 {
+    position: absolute;
+    opacity: 0;
+    animation: img6-3 6s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-6 > .form4 {
+    position: absolute;
+    opacity: 0;
+    animation: img6-4 6s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-6 > .form5 {
+    position: absolute;
+    opacity: 0;
+    animation: img6-5 6s infinite; 
+    animation-timing-function: step-end;
+}
+.alternate-forms-6 > .form6 {
+    position: absolute;
+    opacity: 0;
+    animation: img6-6 6s infinite; 
+    animation-timing-function: step-end;
+}

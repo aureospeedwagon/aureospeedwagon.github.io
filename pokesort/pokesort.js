@@ -2,12 +2,9 @@ all = [];
 tree = [];
 choice = 0;
 n = 0
+stuffList = [];
 showAll = false;
-
-showAlts = false;
-showRegional = false;
-showMega = false;
-showGMax = false;
+showImages = false;
 
 function init() {
     const locals = getLocalStorage();
@@ -15,28 +12,13 @@ function init() {
         all = locals.all;
         tree = locals.tree;
         choice = locals.choice;
-        n = locals.n
+        n = locals.n;
+        stuffList = locals.stuffList;
         document.getElementById('percent').innerHTML = `${n - all.length - 1}/${n}`;
-        showAlts = document.getElementById('alt').checked = locals.showAlts;
-        showRegional = document.getElementById('regional').checked= locals.showRegional;
-        showMega = document.getElementById('mega').checked= locals.showMega;
-        showGMax = document.getElementById('gmax').checked= locals.showGMax;
     } else {
-
-        const baseIds = window.pokemon.filter(x => !x.alt && !x.region && !x.mega && !x.gmax).map(x => x.id);
-        const altIds = window.pokemon.filter(x => x.alt).map(x => x.id);
-        const regionalIds = window.pokemon.filter(x => x.region).map(x => x.id);
-        const megaIds = window.pokemon.filter(x => x.mega).map(x => x.id);
-        const gmaxIds = window.pokemon.filter(x => x.gmax).map(x => x.id);
-
-        all = [...baseIds];
-        all = showAlts ? [...all, ...altIds] : all;
-        all = showRegional ? [...all, ...regionalIds] : all;
-        all = showMega ? [...all, ...megaIds] : all;
-        all = showGMax ? [...all, ...gmaxIds] : all;
-
+        all = stuffList.map((v,i)=>i);
         n = all.length;
-        console.log(all.length, showAlts, showRegional, showMega, showGMax);
+        // console.log(all.length);
 
         const initialCurrent = goRando();
         tree = [[], initialCurrent, []];
@@ -52,8 +34,8 @@ function init() {
     document.getElementById('option').style.visibility = "visible";
 
     if (choice != undefined) {
-        document.getElementById('current').innerHTML = getDataById(tree[1]);
-        document.getElementById('option').innerHTML = getDataById(choice);
+        document.getElementById('current').innerHTML = getDisplayById(tree[1]);
+        document.getElementById('option').innerHTML = getDisplayById(choice);
     } else {
         document.getElementById('current').style.visibility = "hidden";
         document.getElementById('option').style.visibility = "hidden";
@@ -61,12 +43,27 @@ function init() {
     document.getElementById('results').innerHTML = resultDisplay();
 }
 
-function reset() {
+// function start() {
+//     //TODO get selections
+//     localStorage.removeItem('poke-stuff');
+//     init();
+// }
+
+async function pokemon() {
+    stuffList = await getPokemonByGeneration();
     localStorage.removeItem('poke-stuff');
-    showAlts = document.getElementById('alt').checked;
-    showRegional = document.getElementById('regional').checked;
-    showMega = document.getElementById('mega').checked;
-    showGMax = document.getElementById('gmax').checked;
+    init();
+}
+
+async function water() {
+    stuffList = await getPokemonByType('water');
+    localStorage.removeItem('poke-stuff');
+    init();
+}
+
+async function gen(x) {
+    stuffList = await getPokemonByGeneration(x);
+    localStorage.removeItem('poke-stuff');
     init();
 }
 
@@ -84,7 +81,7 @@ function handleMore() {
         handleNewCurrent();
     } else {
         currentBranch = currentBranch[2];
-        document.getElementById('current').innerHTML = getDataById(currentBranch[1]);
+        document.getElementById('current').innerHTML = getDisplayById(currentBranch[1]);
     }
 }
 
@@ -94,7 +91,7 @@ function handleLess() {
         handleNewCurrent();
     } else {
         currentBranch = currentBranch[0];
-        document.getElementById('current').innerHTML = getDataById(currentBranch[1]);
+        document.getElementById('current').innerHTML = getDisplayById(currentBranch[1]);
     }
 }
 
@@ -106,12 +103,13 @@ function handleNewCurrent() {
     tree = rebalanceTree();
     currentBranch = tree;
     if (choice != undefined) {
-        document.getElementById('current').innerHTML = getDataById(tree[1]);
-        document.getElementById('option').innerHTML = getDataById(choice);
+        document.getElementById('current').innerHTML = getDisplayById(tree[1]);
+        document.getElementById('option').innerHTML = getDisplayById(choice);
     } else {
         document.getElementById('current').style.visibility = "hidden";
         document.getElementById('option').style.visibility = "hidden";
     }
+
     setLocalStorage();
 }
 
@@ -121,10 +119,7 @@ function setLocalStorage() {
         all,
         choice,
         n,
-        showAlts,
-        showRegional,
-        showMega,
-        showGMax
+        stuffList
     }));
 }
 
@@ -162,29 +157,38 @@ function resultDisplay() {
     if (!showAll) {
         thing = thing.slice(0, 10);
     }
-    return thing.map((id, rank) => getResultHtml(id, rank)).join('<br>');
+
+    return thing.map((id, rank) => getResultHtml(id, rank, showImages)).join('<br>');
 }
 
-function redoResults() {
+function redoResultShowAll() {
     showAll = !showAll;
     document.getElementById('results').innerHTML = resultDisplay();
 }
 
-function getDataById(id) {
-    // id is a string here so using "==" to match string to number
-    const data = window.pokemon.find(x => x.id == id);
-    return `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png">
-            <br>
-            <span class="name-label">${data.name.toUpperCase()}</span>`;
+function redoResultShowImages() {
+    showImages = !showImages;
+    document.getElementById('results').innerHTML = resultDisplay();
+    document.getElementById('results').className = showImages ? "show-result-images" : "hide-result-images";
 }
 
-function getResultHtml(id, rank) {
-    return `<div class='result'>
-                <span class="ranking-label">#${rank + 1}</span>
-                <br>
-                ${getDataById(id)}
-            </div>`
+function getDisplayById(id) {
+    return stuffList[id].display;
+}
+function getLabelById(id) {
+    return stuffList[id].label;
 }
 
+function getResultHtml(id, rank, image) {
+    if (image) {
+        return `<div class='result'>
+        <span class="ranking-label">#${rank + 1}</span>
+        <br>
+        ${getDisplayById(id)}
+        </div>`
+    } else {
+        return `<span class="ranking-label">#${rank + 1} ${getLabelById(id)}</span><br>`
+    }
+}
 
 init();

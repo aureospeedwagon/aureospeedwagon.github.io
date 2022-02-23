@@ -1,3 +1,15 @@
+.page {
+    display: flex;
+    height: 200px;
+    width: 100%;
+}
+
+.left-side, .right-side {
+    height: 100%;
+    margin: 5px;
+}
+
+
 .row {
     width: 100%;
     display: flex;
@@ -19,7 +31,7 @@
     text-decoration: underline;
 }
 
-#results {
+.show-result-images {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
