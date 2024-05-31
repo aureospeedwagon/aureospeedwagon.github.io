@@ -31,7 +31,7 @@ function val(n) {
 const FALSE = '![]';
 const TRUE = '!![]';
 const UNDEFINED = '[][[]]';
-const NAN = `+${UNDEFINED}`;
+const NAN = '+[![]]';
 
 const true_String = `(${TRUE}+[])`;
 const false_String = `(${FALSE}+[])`;
@@ -107,16 +107,15 @@ const g = `${stringConstructor_String}[${val(14)}]`;
 const ZERO_StringConstructor_String = `(${val(0)}+${empty_String}[${constructor_String}])`
 const S = `${ZERO_StringConstructor_String}[${val(10)}]`;
 
-// "function Array() { [native code] }"
-const arrayConstructor_String = `([][${constructor_String}]+[])`;
-const y = `${arrayConstructor_String}[${val(13)}]`;
-// "0function Array() { [native code] }"
-const ZERO_ArrayConstructor_String = `(${val(0)}+[][${constructor_String}])`;
-const A = `${ZERO_ArrayConstructor_String}[${val(10)}]`;
-
 // "function Number() { [native code] }"
 const numberConstructor_String = `((+[])[${constructor_String}]+[])`;
 const m = `${numberConstructor_String}[${val(11)}]`;
+
+// "11e100"
+const elevenGoogolString = ['[]', safeValue(1), safeValue(1), e, safeValue(1), safeValue(0), safeValue(0)].join('+');
+// "1.1e+101"
+const elevenGoogolNumberString = `((+[])[${constructor_String}](${elevenGoogolString})+[])`;
+const _period = `${elevenGoogolNumberString}[${val(1)}]`;
 
 // "1e100"
 const googolString = [safeValue(1), e, safeValue(1), safeValue(0), safeValue(0)].join('+');
@@ -153,10 +152,11 @@ const objectArrayIterator_String = `([][${entries_String}]()+[])`;
 const b = `${objectArrayIterator_String}[${val(2)}]`;
 const j = `${objectArrayIterator_String}[${val(3)}]`;
 const I = `${objectArrayIterator_String}[${val(14)}]`;
+const y = `${objectArrayIterator_String}[${val(12)}]`;
 
-const object = `([][${entries_String}]()[${constructor_String}]())`;
-const objectObject = `(${NAN}+[][${entries_String}]()[${constructor_String}]())`;
-const O = `${objectObject}[${val(11)}]`;
+// "NaN[object Array Iterator]"
+const NaN_objectArrayIterator = `(${NAN}+${objectArrayIterator_String})`;
+const A = `${NaN_objectArrayIterator}[${val(11)}]`;
 
 // "concat"
 const concat_String = [c, o, n, c, a, t].join('+');
@@ -310,6 +310,7 @@ const K = `${KQequals_String}[${val(0)}]`;
 // "TmFO"
 const TmFO_String = `${btoaFunction}(${NAN})`;
 const T = `${TmFO_String}[${val(0)}]`;
+const O = `${TmFO_String}[${val(3)}]`;
 
 // "YQ=="
 const YQequals_String = `${btoaFunction}(${a})`;
@@ -354,6 +355,7 @@ const _singleQuote = `${tildeSingleQuote_String}[${val(1)}]`;
 const fia_String = [f, i, a].join('+');
 // "~&"
 const tildeAmpersand_String = `${atobFunction}(${fia_String})`;
+const _tilde = `${tildeAmpersand_String}[${val(0)}]`;
 const _ampersand = `${tildeAmpersand_String}[${val(1)}]`;
 
 // "fir"
@@ -361,15 +363,6 @@ const fir_String = [f, i, r].join('+');
 // "~*"
 const tildeStar_String = `${atobFunction}(${fir_String})`;
 const _asterisk = `${tildeStar_String}[${val(1)}]`;
-
-
-// "true/2" (equivalent to "1/2")
-const half_String = `!![]+${_forwardSlash}+(!![]+!![])`;
-// "return true/2"
-const returnHalf_String = `${return_String}+${_space}+${half_String}`;
-const zeroPointFive = `${functionMaker(returnHalf_String)}`;
-const zeroPointFive_String = `(${zeroPointFive}+[])`;
-const _period = `${zeroPointFive_String}[${val(1)}]`;
 
 // "true/1e10" (equivalent to "1e-10")
 const tenBillionth_String = [TRUE, _forwardSlash, safeValue(1), e, safeValue(1), safeValue(0)].join('+');
@@ -471,6 +464,7 @@ garboMap.set('&', _ampersand);
 garboMap.set('-', _minus);
 garboMap.set('*', _asterisk);
 garboMap.set('+', _plus);
+garboMap.set('~', _tilde);
 
 garboMap.set(`
 `, _newLine);
@@ -554,10 +548,10 @@ function convertCode(text, allowCompression = true) {
     return functionMaker(convertTextNonCompressed(`${text}`))
 }
 
-// TODO: make simpler?
-function convertFile(dataUrl) {
-    return convertText(dataUrl);
-}
+// // TODO
+// function convertFile(dataUrl) {
+//     return convertText(dataUrl);
+// }
 
 
 // diagonstics ======================================================================================
@@ -567,7 +561,7 @@ const testString2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const testString3 = '1234567890';
 const testString3b = '1234567890b';
 const testString3c = 'c1234567890';
-const testString4 = ` (){}[]<>/=".',#?:&-*`;
+const testString4 = ` (){}[]<>/=".',#?:&-*~`;
 
 const test1 = eval(convertTextNonCompressed(testString1)) === testString1;
 const test2 = eval(convertTextNonCompressed(testString2)) === testString2;
@@ -652,9 +646,9 @@ async function garbonate() {
 
     if (mode === 'code') {
         out.innerText = convertCode(inp.value)
-    } else if (mode === 'file') {
-        const dataUrl = await getDataUrl();
-        out.innerText = convertFile(dataUrl);
+    // } else if (mode === 'file') {
+    //     const dataUrl = await getDataUrl();
+    //     out.innerText = convertFile(dataUrl);
     } else {
         out.innerText = convertText(inp.value)
     }
